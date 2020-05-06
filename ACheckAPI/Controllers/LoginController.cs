@@ -40,14 +40,11 @@ namespace ACheckAPI.Controllers
                 claims: null,
                 expires: DateTime.Now.AddDays(10),
                 signingCredentials: credentials);
-
             var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
-
             //var token = new JwtSecurityToken(Site,
             //  null,
             //  expires: DateTime.Now.AddMinutes(120),
             //  signingCredentials: credentials);
-
             return encodedJwt;
         }
     }
