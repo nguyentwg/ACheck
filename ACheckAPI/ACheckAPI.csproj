@@ -13,16 +13,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="TWG_HR_API">
-      <HintPath>..\bin\TWG_HR_API.dll</HintPath>
-    </Reference>
-    <Reference Include="TWG_HR_AuthenticationService">
-      <HintPath>..\bin\TWG_HR_AuthenticationService.dll</HintPath>
-    </Reference>
+    <Folder Include="0_publish\" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="0_publish\" />
+    <Reference Include="TWG_HR_API">
+      <HintPath>..\Libraries\TWG_HR_API.dll</HintPath>
+    </Reference>
+    <Reference Include="TWG_HR_AuthenticationService">
+      <HintPath>..\Libraries\TWG_HR_AuthenticationService.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>
