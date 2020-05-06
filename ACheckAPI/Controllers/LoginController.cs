@@ -38,7 +38,7 @@ namespace ACheckAPI.Controllers
             //};
             var jwt = new JwtSecurityToken(
                 claims: null,
-                expires: DateTime.Now.AddDays(20),
+                expires: DateTime.Now.AddDays(10),
                 signingCredentials: credentials);
 
             var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
