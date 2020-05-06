@@ -31,13 +31,13 @@ namespace ACheckAPI.Controllers
             var Key = AppSetting.Key;
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Key));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-            var claims = new[] {
-                new Claim(JwtRegisteredClaimNames.Sub, "Admin"),
-                new Claim(JwtRegisteredClaimNames.Email, "Admin"),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-            };
+            //var claims = new[] {
+            //    new Claim(JwtRegisteredClaimNames.Sub, "Admin"),
+            //    new Claim(JwtRegisteredClaimNames.Email, "Admin"),
+            //    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+            //};
             var jwt = new JwtSecurityToken(
-                claims: claims,
+                claims: null,
                 expires: DateTime.Now.AddDays(20),
                 signingCredentials: credentials);
 
