@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace ACheckAPI.Models
@@ -17,7 +16,7 @@ namespace ACheckAPI.Models
         public string UpdatedAt { get; set; }
         public string Updater { get; set; }
         public bool? Active { get; set; }
-        [JsonIgnore]
+
         public virtual Asset Asset { get; set; }
     }
 }

@@ -1,16 +1,10 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace ACheckAPI.Models
 {
     public partial class Floor
     {
-        public Floor()
-        {
-            Asset = new HashSet<Asset>();
-        }
-
         public string FloorId { get; set; }
         public string BuildingId { get; set; }
         public string FloorName { get; set; }
@@ -23,7 +17,5 @@ namespace ACheckAPI.Models
         public bool? Active { get; set; }
 
         public virtual Building Building { get; set; }
-        [JsonIgnore]
-        public virtual ICollection<Asset> Asset { get; set; }
     }
 }

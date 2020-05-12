@@ -8,7 +8,7 @@ namespace ACheckAPI.Models
     {
         public Category()
         {
-            Asset = new HashSet<Asset>();
+            AssetCategory = new HashSet<AssetCategory>();
         }
 
         public string CategoryId { get; set; }
@@ -23,8 +23,9 @@ namespace ACheckAPI.Models
         public string Updater { get; set; }
         public bool? Active { get; set; }
         public int? No { get; set; }
-
-        [JsonIgnore]
-        public virtual ICollection<Asset> Asset { get; set; }
+        public string Path { get; set; }
+        public string CategoryType { get; set; }
+        public virtual ICollection<AssetCategory> AssetCategory { get; set; }
+        public virtual ICollection<EavAttributeValue> EavAttributeValue { get; set; }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ACheckAPI.Models
 {
@@ -7,12 +8,12 @@ namespace ACheckAPI.Models
     {
         public Asset()
         {
+            AssetCategory = new HashSet<AssetCategory>();
             Assign = new HashSet<Assign>();
+            DeptAsset = new HashSet<DeptAsset>();
         }
 
         public string AssetId { get; set; }
-        public string CategoryId { get; set; }
-        public string FloorId { get; set; }
         public string AssetCode { get; set; }
         public string AssetName { get; set; }
         public string Description { get; set; }
@@ -23,8 +24,14 @@ namespace ACheckAPI.Models
         public string Updater { get; set; }
         public bool? Active { get; set; }
 
-        public virtual Category Category { get; set; }
-        public virtual Floor Floor { get; set; }
+        [NotMapped]
+        public string CategoryID { get; set; }
+
+        [NotMapped]
+        public string CategoryName { get; set; }
+
+        public virtual ICollection<AssetCategory> AssetCategory { get; set; }
         public virtual ICollection<Assign> Assign { get; set; }
+        public virtual ICollection<DeptAsset> DeptAsset { get; set; }
     }
 }

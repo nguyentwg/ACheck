@@ -6,6 +6,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using ACheckAPI.Common;
+using ACheckAPI.ModelViews;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -31,13 +32,13 @@ namespace ACheckAPI.Controllers
             var Key = AppSetting.Key;
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Key));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-            //var claims = new[] {
-            //    new Claim(JwtRegisteredClaimNames.Sub, "Admin"),
-            //    new Claim(JwtRegisteredClaimNames.Email, "Admin"),
-            //    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-            //};
+            var claims1 = new[] {
+                new Claim(JwtRegisteredClaimNames.Sub, "Admin"),
+                new Claim(JwtRegisteredClaimNames.Email, "Admin"),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+            };
             var jwt = new JwtSecurityToken(
-                claims: null,
+                claims: claims1,
                 expires: DateTime.Now.AddDays(10),
                 signingCredentials: credentials);
             var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);

@@ -1,21 +1,19 @@
-﻿using ACheckAPI.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ACheckAPI.Models;
 
 namespace ACheckAPI.ModelViews
 {
-    public class ViewAsset
+    public class ViewAddCategory
     {
-        public Asset asset { get; set; }
-        public Assign assign { get; set; }
+        public Category Category { get; set; }
         public virtual List<EavAttributeValue> EavAttributeValue { get; set; }
 
-        public ViewAsset()
+        public ViewAddCategory()
         {
-            asset = new Asset();
-            assign = new Assign();
+            Category = new Category();
             EavAttributeValue = new List<EavAttributeValue>();
         }
     }

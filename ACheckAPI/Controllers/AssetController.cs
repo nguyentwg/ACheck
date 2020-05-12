@@ -27,7 +27,8 @@ namespace ACheckAPI.Controllers
             try
             {
                 DaoAsset daoAsset = new DaoAsset(tWG_ACHECKContext);
-                var result = daoAsset.GetAssetByID(AssetID);
+                //var result = daoAsset.GetAssetByID(AssetID);
+                var result = daoAsset.GetAssetByAssetID(AssetID);
                 obj.status = 1;
                 obj.value = result;
             }
@@ -94,6 +95,36 @@ namespace ACheckAPI.Controllers
                 {
                     DaoAsset daoAsset = new DaoAsset(tWG_ACHECKContext);
                     var result = daoAsset.AddAsset(entity.asset, entity.assign);
+                    if (result > 0)
+                    {
+                        obj.status = 1;
+                    }
+                    obj.value = result;
+                    transaction.Commit();
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    obj.status = -1;
+                    obj.message = ex.StackTrace;
+                }
+            }
+            return obj;
+        }
+
+        [HttpPost]
+        [Route("Add")]
+
+        public ReturnObject Add(ModelViews.ViewAsset entity)
+        {
+            ReturnObject obj = new ReturnObject();
+            obj.status = -1;
+            using (var transaction = tWG_ACHECKContext.Database.BeginTransaction())
+            {
+                try
+                {
+                    DaoAsset daoAsset = new DaoAsset(tWG_ACHECKContext);
+                    var result = daoAsset.Add(entity);
                     if (result > 0)
                     {
                         obj.status = 1;

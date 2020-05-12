@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace ACheckAPI.Models
@@ -22,7 +21,6 @@ namespace ACheckAPI.Models
         public string Updater { get; set; }
         public bool? Active { get; set; }
 
-        [JsonIgnore]
         public virtual ICollection<Floor> Floor { get; set; }
     }
 }

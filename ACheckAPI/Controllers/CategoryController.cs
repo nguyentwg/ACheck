@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using ACheckAPI.Common;
 using ACheckAPI.Dao;
 using ACheckAPI.Models;
+using ACheckAPI.ModelViews;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -18,11 +19,10 @@ namespace ACheckAPI.Controllers
     public class CategoryController : BaseController
     {
         public CategoryController(TWG_ACHECKContext tWG_ACHECKContext) : base(tWG_ACHECKContext) { }
-
-        // GET api/Category
+        
         [HttpGet]
         [Route("GetAll")]
-        public ReturnObject Get()
+        public ReturnObject GetAll()
         {
             ReturnObject obj = new ReturnObject();
             try
@@ -33,6 +33,26 @@ namespace ACheckAPI.Controllers
                 obj.value = result;
             }
             catch(Exception ex)
+            {
+                obj.status = -1;
+                obj.message = ex.StackTrace;
+            }
+            return obj;
+        }
+
+        [HttpGet]
+        [Route("Get")]
+        public ReturnObject Get()
+        {
+            ReturnObject obj = new ReturnObject();
+            try
+            {
+                DaoCategory daoCategory = new DaoCategory(tWG_ACHECKContext);
+                var result = daoCategory.Get();
+                obj.status = 1;
+                obj.value = result;
+            }
+            catch (Exception ex)
             {
                 obj.status = -1;
                 obj.message = ex.StackTrace;
@@ -62,8 +82,7 @@ namespace ACheckAPI.Controllers
             }
             return obj;
         }
-
-        // GET api/Category
+        
         [HttpPost]
         [Route("AddCategory")]
 
@@ -75,6 +94,54 @@ namespace ACheckAPI.Controllers
             {
                 DaoCategory daoCategory = new DaoCategory(tWG_ACHECKContext);
                 var result = daoCategory.AddCategory(entity);
+                if (result > 0)
+                {
+                    obj.status = 1;
+                }
+                obj.value = result;
+            }
+            catch (Exception ex)
+            {
+                obj.status = -1;
+                obj.message = ex.StackTrace;
+            }
+            return obj;
+        }
+
+        [HttpPost]
+        [Route("Add")]
+        public ReturnObject Add(ViewAddCategory entity)
+        {
+            ReturnObject obj = new ReturnObject();
+            obj.status = -1;
+            try
+            {
+                DaoCategory daoCategory = new DaoCategory(tWG_ACHECKContext);
+                var result = daoCategory.Add(entity);
+                if (result > 0)
+                {
+                    obj.status = 1;
+                }
+                obj.value = result;
+            }
+            catch (Exception ex)
+            {
+                obj.status = -1;
+                obj.message = ex.StackTrace;
+            }
+            return obj;
+        }
+
+        [HttpPost]
+        [Route("Update")]
+        public ReturnObject Update(ViewAddCategory entity)
+        {
+            ReturnObject obj = new ReturnObject();
+            obj.status = -1;
+            try
+            {
+                DaoCategory daoCategory = new DaoCategory(tWG_ACHECKContext);
+                var result = daoCategory.Update(entity);
                 if (result > 0)
                 {
                     obj.status = 1;

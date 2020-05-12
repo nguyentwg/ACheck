@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using shortid;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Linq;
+using ACheckAPI.ModelViews;
 
 namespace ACheckAPI.Dao
 {
@@ -19,9 +20,60 @@ namespace ACheckAPI.Dao
             return context.Category.AsNoTracking().Where(p => p.Active == true).AsEnumerable().ToList();
         }
 
+        public List<Category> Get()
+        {
+            return context.Category.AsNoTracking().Where(p => p.Active == true).Include(p=>p.EavAttributeValue).ThenInclude(x=>x.Eav).AsEnumerable().ToList();
+        }
+
         public List<Category> GetCategoriesByID(string CategoryId)
         {
-            return context.Category.AsNoTracking().Where(p => p.Active == true && p.ParentId.Equals(CategoryId)).AsEnumerable().ToList();
+            return context.Category.AsNoTracking().Where(p => p.Active == true && p.ParentId.Equals(CategoryId)).Include(p => p.EavAttributeValue).ThenInclude(x => x.Eav).AsEnumerable().ToList();
+            //return context.Category.AsNoTracking().Where(p => p.Active == true && p.ParentId.Equals(CategoryId)).AsEnumerable().ToList();
+        }
+
+        public int Add(ViewAddCategory entity)
+        {
+            Category category = entity.Category;
+            List<EavAttributeValue> lsAttributeValue = entity.EavAttributeValue;
+            DaoEAVAttribute daoEAVAttribute = new DaoEAVAttribute(context);
+            category.CategoryId = this.GenerateCategoryID();
+            bool checkCode = this.CheckUniqueCategoryCode(category.Code, category.CategoryId);
+            bool checkID = this.CheckUniqueCategoryID(category.CategoryId);
+            if (checkCode && checkID)
+            {
+                category.CreatedAt = DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss");
+                category.UpdatedAt = DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss");
+                context.Category.Add(category);
+                foreach (EavAttributeValue item in lsAttributeValue)
+                {
+                    item.Guid = Guid.NewGuid().ToString().ToUpper();
+                    item.CategoryId = category.CategoryId;
+                    context.EavAttributeValue.Add(item);
+                }
+            }
+            return context.SaveChanges();
+        }
+
+        public int Update(ViewAddCategory entity)
+        {
+            //var a = context.Category.AsNoTracking().Where(p => p.CategoryId.Equals(entity.Category.CategoryId)).FirstOrDefault();
+            Category category = entity.Category;
+            List<EavAttributeValue> lsAttributeValue = entity.EavAttributeValue;
+            DaoEAVAttribute daoEAVAttribute = new DaoEAVAttribute(context);
+            bool checkCode = this.CheckUniqueCategoryCode(category.Code, category.CategoryId);
+            if (checkCode)
+            {
+                category.UpdatedAt = DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss");
+                context.Category.Update(category);
+                context.EavAttributeValue.RemoveRange(context.EavAttributeValue.Where(p => p.CategoryId.Equals(category.CategoryId)));
+                foreach (EavAttributeValue item in lsAttributeValue)
+                {
+                    item.Guid = Guid.NewGuid().ToString().ToUpper();
+                    item.CategoryId = category.CategoryId;
+                    context.EavAttributeValue.Add(item);
+                }
+            }
+            return context.SaveChanges();
         }
 
         public int AddCategory(Category category)

@@ -16,9 +16,13 @@ namespace ACheckAPI.Models
         }
 
         public virtual DbSet<Asset> Asset { get; set; }
+        public virtual DbSet<AssetCategory> AssetCategory { get; set; }
         public virtual DbSet<Assign> Assign { get; set; }
         public virtual DbSet<Building> Building { get; set; }
         public virtual DbSet<Category> Category { get; set; }
+        public virtual DbSet<DeptAsset> DeptAsset { get; set; }
+        public virtual DbSet<EavAttribute> EavAttribute { get; set; }
+        public virtual DbSet<EavAttributeValue> EavAttributeValue { get; set; }
         public virtual DbSet<Floor> Floor { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -52,10 +56,6 @@ namespace ACheckAPI.Models
                     .HasColumnName("Asset_Name")
                     .HasMaxLength(50);
 
-                entity.Property(e => e.CategoryId)
-                    .HasColumnName("Category_ID")
-                    .HasMaxLength(50);
-
                 entity.Property(e => e.CreatedAt)
                     .HasColumnName("Created_AT")
                     .HasMaxLength(20);
@@ -64,10 +64,6 @@ namespace ACheckAPI.Models
 
                 entity.Property(e => e.Description).HasColumnType("ntext");
 
-                entity.Property(e => e.FloorId)
-                    .HasColumnName("Floor_ID")
-                    .HasMaxLength(50);
-
                 entity.Property(e => e.Folder).HasColumnType("ntext");
 
                 entity.Property(e => e.UpdatedAt)
@@ -75,16 +71,36 @@ namespace ACheckAPI.Models
                     .HasMaxLength(20);
 
                 entity.Property(e => e.Updater).HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<AssetCategory>(entity =>
+            {
+                entity.HasKey(e => e.Guid)
+                    .HasName("PK__AssetCategory__E452D3DB41C896C3");
+
+                entity.Property(e => e.Guid)
+                    .HasMaxLength(50)
+                    .ValueGeneratedNever();
+
+                entity.Property(e => e.AssetId)
+                    .HasColumnName("Asset_ID")
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.CategoryId)
+                    .HasColumnName("Category_ID")
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.Type).HasMaxLength(50);
+
+                entity.HasOne(d => d.Asset)
+                    .WithMany(p => p.AssetCategory)
+                    .HasForeignKey(d => d.AssetId)
+                    .HasConstraintName("fk_Asset_AssetCategory_1");
 
                 entity.HasOne(d => d.Category)
-                    .WithMany(p => p.Asset)
+                    .WithMany(p => p.AssetCategory)
                     .HasForeignKey(d => d.CategoryId)
-                    .HasConstraintName("fk_Asset_Category_1");
-
-                entity.HasOne(d => d.Floor)
-                    .WithMany(p => p.Asset)
-                    .HasForeignKey(d => d.FloorId)
-                    .HasConstraintName("fk_Asset_Floor_1");
+                    .HasConstraintName("fk_Category_AssetCategory_1");
             });
 
             modelBuilder.Entity<Assign>(entity =>
@@ -102,7 +118,7 @@ namespace ACheckAPI.Models
                     .HasMaxLength(50);
 
                 entity.Property(e => e.CreatedAt)
-                    .HasColumnName("Created_AT")
+                    .HasColumnName("Created_At")
                     .HasMaxLength(20);
 
                 entity.Property(e => e.Creater).HasMaxLength(50);
@@ -122,7 +138,7 @@ namespace ACheckAPI.Models
                     .HasMaxLength(20);
 
                 entity.Property(e => e.UpdatedAt)
-                    .HasColumnName("Updated_AT")
+                    .HasColumnName("Updated_At")
                     .HasMaxLength(20);
 
                 entity.Property(e => e.Updater).HasMaxLength(50);
@@ -183,6 +199,8 @@ namespace ACheckAPI.Models
                     .HasColumnName("Category_Name")
                     .HasMaxLength(50);
 
+                entity.Property(e => e.CategoryType).HasMaxLength(50);
+
                 entity.Property(e => e.Code)
                     .HasColumnName("CODE")
                     .HasMaxLength(20);
@@ -202,11 +220,99 @@ namespace ACheckAPI.Models
                     .HasMaxLength(50)
                     .HasDefaultValueSql("((0))");
 
+                entity.Property(e => e.Path).HasColumnType("ntext");
+
                 entity.Property(e => e.UpdatedAt)
                     .HasColumnName("Updated_AT")
                     .HasMaxLength(20);
 
                 entity.Property(e => e.Updater).HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<DeptAsset>(entity =>
+            {
+                entity.HasKey(e => e.Guid)
+                    .HasName("PK__DeptAsset__E452D3DB41C896C3");
+
+                entity.Property(e => e.Guid)
+                    .HasMaxLength(50)
+                    .ValueGeneratedNever();
+
+                entity.Property(e => e.Active).HasDefaultValueSql("((1))");
+
+                entity.Property(e => e.AssetId)
+                    .HasColumnName("Asset_ID")
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.DeptId)
+                    .HasColumnName("Dept_ID")
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.FromDate)
+                    .HasColumnName("From_Date")
+                    .HasMaxLength(20);
+
+                entity.Property(e => e.ToDate)
+                    .HasColumnName("To_Date")
+                    .HasMaxLength(20);
+
+                entity.HasOne(d => d.Asset)
+                    .WithMany(p => p.DeptAsset)
+                    .HasForeignKey(d => d.AssetId)
+                    .HasConstraintName("fk_Asset_DeptAsset_1");
+            });
+
+            modelBuilder.Entity<EavAttribute>(entity =>
+            {
+                entity.HasKey(e => e.Guid)
+                    .HasName("PK__Eav_Attribute__E452D3DB41C896C3");
+
+                entity.ToTable("Eav_Attribute");
+
+                entity.Property(e => e.Guid)
+                    .HasMaxLength(50)
+                    .ValueGeneratedNever();
+
+                entity.Property(e => e.Active).HasDefaultValueSql("((1))");
+
+                entity.Property(e => e.AttributeGroup).HasMaxLength(50);
+
+                entity.Property(e => e.Display).HasMaxLength(50);
+
+                entity.Property(e => e.Name).HasMaxLength(50);
+
+                entity.Property(e => e.Type).HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<EavAttributeValue>(entity =>
+            {
+                entity.HasKey(e => e.Guid)
+                    .HasName("PK__Eav_Attribute_Value__E452D3DB41C896C3");
+
+                entity.ToTable("Eav_Attribute_Value");
+
+                entity.Property(e => e.Guid)
+                    .HasMaxLength(50)
+                    .ValueGeneratedNever();
+
+                entity.Property(e => e.Active).HasDefaultValueSql("((1))");
+
+                entity.Property(e => e.CategoryId)
+                    .HasColumnName("Category_ID")
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.EavId)
+                    .HasColumnName("EAV_ID")
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.Value).HasMaxLength(50);
+
+                entity.Property(e => e.AttributeGroup).HasMaxLength(50);
+                
+                entity.HasOne(d => d.Eav)
+                    .WithMany(p => p.EavAttributeValue)
+                    .HasForeignKey(d => d.EavId)
+                    .HasConstraintName("fk_EAV_Eav_Attribute_Value_1");
             });
 
             modelBuilder.Entity<Floor>(entity =>
