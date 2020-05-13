@@ -40,6 +40,27 @@ namespace ACheckAPI.Controllers
             return obj;
         }
 
+        [HttpGet]
+        [Route("GetAttributeByGroup")]
+        public ReturnObject GetAttributeByGroup(string AttributeByGroup)
+        {
+            ReturnObject obj = new ReturnObject();
+            obj.status = -1;
+            try
+            {
+                DaoEAVAttribute daoEAVAttribute = new DaoEAVAttribute(tWG_ACHECKContext);
+                var result = daoEAVAttribute.GetAttributeByGroup(AttributeByGroup);
+                obj.status = 1;
+                obj.value = result;
+            }
+            catch (Exception ex)
+            {
+                obj.status = -1;
+                obj.message = ex.StackTrace;
+            }
+            return obj;
+        }
+
         [HttpPost]
         [Route("AddAttribute")]
         public ReturnObject AddAttribute(EavAttribute entity)
@@ -71,7 +92,7 @@ namespace ACheckAPI.Controllers
 
         [HttpPost]
         [Route("UpdateAttribute")]
-        public ReturnObject UpdateAttribute(EavAttribute entity)
+        public async Task<ReturnObject> UpdateAttribute(EavAttribute entity)
         {
             ReturnObject obj = new ReturnObject();
             obj.status = -1;
@@ -80,7 +101,7 @@ namespace ACheckAPI.Controllers
                 try
                 {
                     DaoEAVAttribute daoEAVAttribute = new DaoEAVAttribute(tWG_ACHECKContext);
-                    var result = daoEAVAttribute.UpdateEavAttribute(entity);
+                    int result = await daoEAVAttribute.UpdateEavAttribute(entity);
                     if (result > 0)
                     {
                         obj.status = 1;

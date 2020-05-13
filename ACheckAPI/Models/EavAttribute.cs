@@ -1,6 +1,8 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace ACheckAPI.Models
 {
@@ -20,5 +22,6 @@ namespace ACheckAPI.Models
 
         [JsonIgnore]
         public virtual ICollection<EavAttributeValue> EavAttributeValue { get; set; }
+        
     }
 }

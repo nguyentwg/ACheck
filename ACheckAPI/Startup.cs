@@ -56,7 +56,6 @@ namespace ACheckAPI
 
             services.AddMvc().AddJsonOptions(options => options.SerializerSettings.ContractResolver = new Newtonsoft.Json.Serialization.DefaultContractResolver()).SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddSession();
-
             services.Configure<FormOptions>(options =>
             {
                 options.ValueCountLimit = int.MaxValue;

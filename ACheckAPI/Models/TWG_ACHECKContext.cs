@@ -1,11 +1,24 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace ACheckAPI.Models
 {
     public partial class TWG_ACHECKContext : DbContext
     {
+        private TWG_ACHECKContext _context;
+        private readonly ILoggerFactory loggerFactory;
+        private readonly IHttpContextAccessor httpContextAccessor;
+
+
         public TWG_ACHECKContext()
         {
         }
@@ -14,6 +27,12 @@ namespace ACheckAPI.Models
             : base(options)
         {
         }
+        public TWG_ACHECKContext(DbContextOptions<TWG_ACHECKContext> options, ILoggerFactory loggerFactory)
+        : base(options)
+        {
+            this.loggerFactory = loggerFactory;
+            this.httpContextAccessor = httpContextAccessor;
+        } 
 
         public virtual DbSet<Asset> Asset { get; set; }
         public virtual DbSet<AssetCategory> AssetCategory { get; set; }
@@ -24,13 +43,70 @@ namespace ACheckAPI.Models
         public virtual DbSet<EavAttribute> EavAttribute { get; set; }
         public virtual DbSet<EavAttributeValue> EavAttributeValue { get; set; }
         public virtual DbSet<Floor> Floor { get; set; }
+        public virtual DbSet<AuditTrail> AuditTrail { get; set; }
+        
+
+        public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            var temoraryAuditEntities = await AuditNonTemporaryProperties();
+            var result = await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+            await AuditTemporaryProperties(temoraryAuditEntities);
+            return result;
+        }
+        
+        async Task AuditTemporaryProperties(IEnumerable<Tuple<EntityEntry, AuditTrail>> temporatyEntities)
+        {
+            if (temporatyEntities != null && temporatyEntities.Any())
+            {
+                await AuditTrail.AddRangeAsync(
+                temporatyEntities.ForEach(t => t.Item2.KeyValues = JsonConvert.SerializeObject(t.Item1.Properties.Where(p => p.Metadata.IsPrimaryKey()).ToDictionary(p => p.Metadata.Name, p => p.CurrentValue).NullIfEmpty()))
+                .Select(t => t.Item2)
+                );
+                await SaveChangesAsync();
+            }
+            await Task.CompletedTask;
+        }
+        
+        async Task<IEnumerable<Tuple<EntityEntry, AuditTrail>>> AuditNonTemporaryProperties()
+        {
+            Dictionary<string, string> abc = new Dictionary<string, string>();
+            ChangeTracker.DetectChanges();
+            var entitiesToTrack = ChangeTracker.Entries().Where(e => !(e.Entity is AuditTrail) && e.State != EntityState.Detached && e.State != EntityState.Unchanged);
+            
+            await AuditTrail.AddRangeAsync(
+                entitiesToTrack.Where(e => !e.Properties.Any(p => p.IsTemporary)).Select(e => new AuditTrail()
+                {
+                    AuditTrailId= Guid.NewGuid().ToString(),
+                    Table = e.Metadata.Relational().TableName,
+                    Date = DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss"),
+                    KeyValues = JsonConvert.SerializeObject(e.Properties.Where(p => p.Metadata.IsPrimaryKey()).ToDictionary(p => p.Metadata.Name, p => p.CurrentValue).NullIfEmpty()),
+                    NewValue = JsonConvert.SerializeObject(e.Properties.Where(p => e.State == EntityState.Added || e.State == EntityState.Modified).ToDictionary(p => p.Metadata.Name, p => p.CurrentValue).NullIfEmpty()),
+                    OldValue = JsonConvert.SerializeObject(e.Properties.Where(p => e.State == EntityState.Deleted || e.State == EntityState.Modified).ToDictionary(p => p.Metadata.Name, p => p.OriginalValue).NullIfEmpty())
+                }).ToList()
+            );
+            
+            return entitiesToTrack.Where(e => e.Properties.Any(p => p.IsTemporary))
+                 .Select(e => new Tuple<EntityEntry, AuditTrail>(
+                     e,
+                 new AuditTrail()
+                 {
+                     AuditTrailId = Guid.NewGuid().ToString(),
+                     Table = e.Metadata.Relational().TableName,
+                     Date = DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss"),
+                     KeyValues = JsonConvert.SerializeObject(e.Properties.Where(p => p.Metadata.IsPrimaryKey()).ToDictionary(p => p.Metadata.Name, p => p.CurrentValue).NullIfEmpty()),
+                     NewValue = JsonConvert.SerializeObject(e.Properties.Where(p => e.State == EntityState.Added || e.State == EntityState.Modified).ToDictionary(p => p.Metadata.Name, p => p.CurrentValue)),
+                     OldValue = JsonConvert.SerializeObject(e.Properties.Where(p => e.State == EntityState.Deleted || e.State == EntityState.Modified).ToDictionary(p => p.Metadata.Name, p => p.OriginalValue))
+                 }
+                 )).ToList();
+        }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
+            optionsBuilder.UseLoggerFactory(loggerFactory);
             if (!optionsBuilder.IsConfigured)
             {
                 //#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseSqlServer("Data Source=MINHYNGUYEN\\MSSQLSERVER16;Initial Catalog=TWG_ACHECK;Integrated Security=True");
+                optionsBuilder.UseSqlServer("Data Source=MINHYNGUYEN\\MSSQLSERVER16;Initial Catalog=TWG_ACHECK;Integrated Security=True;MultipleActiveResultSets=true");
             }
         }
 
@@ -228,7 +304,24 @@ namespace ACheckAPI.Models
 
                 entity.Property(e => e.Updater).HasMaxLength(50);
             });
+            modelBuilder.Entity<AuditTrail>(entity =>
+            {
+                entity.Property(e => e.AuditTrailId)
+                    .HasMaxLength(50)
+                    .ValueGeneratedNever();
 
+                entity.Property(e => e.Column).HasMaxLength(50);
+
+                entity.Property(e => e.Date).HasMaxLength(20);
+
+                entity.Property(e => e.NewValue).HasColumnType("ntext");
+
+                entity.Property(e => e.KeyValues).HasMaxLength(50);
+
+                entity.Property(e => e.OldValue).HasColumnType("ntext");
+
+                entity.Property(e => e.Table).HasMaxLength(250);
+            });
             modelBuilder.Entity<DeptAsset>(entity =>
             {
                 entity.HasKey(e => e.Guid)
@@ -237,6 +330,18 @@ namespace ACheckAPI.Models
                 entity.Property(e => e.Guid)
                     .HasMaxLength(50)
                     .ValueGeneratedNever();
+
+                entity.Property(e => e.CreatedAt)
+                    .HasColumnName("Created_AT")
+                    .HasMaxLength(20);
+
+                entity.Property(e => e.UpdatedAt)
+                    .HasColumnName("Updated_AT")
+                    .HasMaxLength(20);
+
+                entity.Property(e => e.Creater).HasMaxLength(50);
+
+                entity.Property(e => e.Updater).HasMaxLength(50);
 
                 entity.Property(e => e.Active).HasDefaultValueSql("((1))");
 

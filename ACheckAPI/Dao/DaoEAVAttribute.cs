@@ -3,8 +3,13 @@ using Microsoft.EntityFrameworkCore;
 using shortid;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using System.Reflection;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ACheckAPI.Dao
 {
@@ -17,6 +22,11 @@ namespace ACheckAPI.Dao
             return context.EavAttribute.Where(p => p.Active == true).AsEnumerable().ToList();
         }
 
+        public List<EavAttribute> GetAttributeByGroup(string AttributeGroup)
+        {
+            return context.EavAttribute.Where(p => p.Active == true && p.AttributeGroup.Equals(AttributeGroup)).AsEnumerable().ToList();
+        }
+
         public int AddEavAttribute(EavAttribute entity)
         {
             entity.Guid = this.GenerateEavAttributeID();
@@ -24,11 +34,13 @@ namespace ACheckAPI.Dao
             return context.SaveChanges();
         }
 
-        public int UpdateEavAttribute(EavAttribute eavAttribute)
+        
+        public async Task<int> UpdateEavAttribute(EavAttribute eavAttribute)
         {
-            var entity = context.EavAttribute.AsNoTracking().Where(p => p.Guid.Equals(eavAttribute.Guid)).FirstOrDefault();
-            context.EavAttribute.Update(eavAttribute);
-            return context.SaveChanges();
+            var entity = context.EavAttribute.Where(p => p.Guid.Equals(eavAttribute.Guid)).FirstOrDefault();
+            eavAttribute.CopyPropertiesTo<EavAttribute>(entity);
+            context.EavAttribute.Update(entity);
+            return await context.SaveChangesAsync();
         }
 
         public int DeleteEavAttribute(string id)

@@ -57,8 +57,13 @@ namespace ACheckAPI.Dao
         public int Add(ViewAsset viewAsset)
         {
             DaoAssign daoAssign = new DaoAssign(context);
+            DaoDeptAsset daoDeptAsset = new DaoDeptAsset(context);
             Asset asset = new Asset();
+            Assign assign = new Assign();
+            DeptAsset deptAsset = new DeptAsset();
             asset = viewAsset.asset;
+            assign = viewAsset.assign;
+            deptAsset = viewAsset.DeptAsset;
             List<EavAttributeValue> lsAttributeValue = new List<EavAttributeValue>();
             lsAttributeValue = viewAsset.EavAttributeValue;
             asset.AssetId = this.GenerateAssetID();
@@ -75,7 +80,16 @@ namespace ACheckAPI.Dao
                 assetCategory.EavId = asset.CategoryID;
                 assetCategory.AttributeGroup = EnumEAV.EAV_Type.AssetCategory.ToString();
                 context.EavAttributeValue.Add(assetCategory);
-
+                if (assign != null)
+                {
+                    assign.AssetId = asset.AssetId;
+                    daoAssign.AssignAsset(assign);
+                }
+                if(deptAsset != null)
+                {
+                    deptAsset.AssetId = asset.AssetId;
+                    daoDeptAsset.Add(deptAsset);
+                }
                 foreach (EavAttributeValue item in lsAttributeValue)
                 {
                     item.Guid = Guid.NewGuid().ToString().ToUpper();
