@@ -31,7 +31,6 @@ namespace ACheckAPI.Models
         : base(options)
         {
             this.loggerFactory = loggerFactory;
-            this.httpContextAccessor = httpContextAccessor;
         } 
 
         public virtual DbSet<Asset> Asset { get; set; }
@@ -72,11 +71,22 @@ namespace ACheckAPI.Models
             Dictionary<string, string> abc = new Dictionary<string, string>();
             ChangeTracker.DetectChanges();
             var entitiesToTrack = ChangeTracker.Entries().Where(e => !(e.Entity is AuditTrail) && e.State != EntityState.Detached && e.State != EntityState.Unchanged);
-            
+            var a =
+                entitiesToTrack.Where(e => !e.Properties.Any(p => p.IsTemporary)).Select(e => new AuditTrail()
+                {
+                    AuditTrailId = Guid.NewGuid().ToString(),
+                    Action = Enum.GetName(typeof(EntityState), e.State),
+                    Table = e.Metadata.Relational().TableName,
+                    Date = DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss"),
+                    KeyValues = JsonConvert.SerializeObject(e.Properties.Where(p => p.Metadata.IsPrimaryKey()).ToDictionary(p => p.Metadata.Name, p => p.CurrentValue).NullIfEmpty()),
+                    NewValue = JsonConvert.SerializeObject(e.Properties.Where(p => e.State == EntityState.Added || e.State == EntityState.Modified).ToDictionary(p => p.Metadata.Name, p => p.CurrentValue).NullIfEmpty()),
+                    OldValue = JsonConvert.SerializeObject(e.Properties.Where(p => e.State == EntityState.Deleted || e.State == EntityState.Modified).ToDictionary(p => p.Metadata.Name, p => p.OriginalValue).NullIfEmpty())
+                }).ToList();
             await AuditTrail.AddRangeAsync(
                 entitiesToTrack.Where(e => !e.Properties.Any(p => p.IsTemporary)).Select(e => new AuditTrail()
                 {
                     AuditTrailId= Guid.NewGuid().ToString(),
+                    Action = Enum.GetName(typeof(EntityState), e.State),
                     Table = e.Metadata.Relational().TableName,
                     Date = DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss"),
                     KeyValues = JsonConvert.SerializeObject(e.Properties.Where(p => p.Metadata.IsPrimaryKey()).ToDictionary(p => p.Metadata.Name, p => p.CurrentValue).NullIfEmpty()),
@@ -91,6 +101,7 @@ namespace ACheckAPI.Models
                  new AuditTrail()
                  {
                      AuditTrailId = Guid.NewGuid().ToString(),
+                     Action = Enum.GetName(typeof(EntityState), e.State),
                      Table = e.Metadata.Relational().TableName,
                      Date = DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss"),
                      KeyValues = JsonConvert.SerializeObject(e.Properties.Where(p => p.Metadata.IsPrimaryKey()).ToDictionary(p => p.Metadata.Name, p => p.CurrentValue).NullIfEmpty()),
@@ -105,7 +116,6 @@ namespace ACheckAPI.Models
             optionsBuilder.UseLoggerFactory(loggerFactory);
             if (!optionsBuilder.IsConfigured)
             {
-                //#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
                 optionsBuilder.UseSqlServer("Data Source=MINHYNGUYEN\\MSSQLSERVER16;Initial Catalog=TWG_ACHECK;Integrated Security=True;MultipleActiveResultSets=true");
             }
         }
@@ -189,7 +199,7 @@ namespace ACheckAPI.Models
                 entity.Property(e => e.Active).HasDefaultValueSql("((1))");
 
                 entity.Property(e => e.AssetId)
-                    .IsRequired()
+                    //.IsRequired()
                     .HasColumnName("Asset_ID")
                     .HasMaxLength(50);
 
@@ -312,11 +322,13 @@ namespace ACheckAPI.Models
 
                 entity.Property(e => e.Column).HasMaxLength(50);
 
+                entity.Property(e => e.Action).HasMaxLength(50);
+
                 entity.Property(e => e.Date).HasMaxLength(20);
 
                 entity.Property(e => e.NewValue).HasColumnType("ntext");
 
-                entity.Property(e => e.KeyValues).HasMaxLength(50);
+                entity.Property(e => e.KeyValues).HasMaxLength(250);
 
                 entity.Property(e => e.OldValue).HasColumnType("ntext");
 

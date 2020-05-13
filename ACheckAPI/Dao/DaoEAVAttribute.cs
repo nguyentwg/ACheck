@@ -27,14 +27,15 @@ namespace ACheckAPI.Dao
             return context.EavAttribute.Where(p => p.Active == true && p.AttributeGroup.Equals(AttributeGroup)).AsEnumerable().ToList();
         }
 
-        public int AddEavAttribute(EavAttribute entity)
+        public async Task<int> AddEavAttribute(EavAttribute entity)
         {
             entity.Guid = this.GenerateEavAttributeID();
             context.EavAttribute.Add(entity);
-            return context.SaveChanges();
+            return await context.SaveChangesAsync();
         }
 
-        
+
+
         public async Task<int> UpdateEavAttribute(EavAttribute eavAttribute)
         {
             var entity = context.EavAttribute.Where(p => p.Guid.Equals(eavAttribute.Guid)).FirstOrDefault();
@@ -43,12 +44,12 @@ namespace ACheckAPI.Dao
             return await context.SaveChangesAsync();
         }
 
-        public int DeleteEavAttribute(string id)
+        public async Task<int> DeleteEavAttribute(string id)
         {
-            var entity = context.EavAttribute.AsNoTracking().Where(p => p.Guid.Equals(id)).FirstOrDefault();
+            var entity = context.EavAttribute.Where(p => p.Guid.Equals(id)).FirstOrDefault();
             entity.Active = false;
             context.EavAttribute.Update(entity);
-            return context.SaveChanges();
+            return await context.SaveChangesAsync();
         }
 
 

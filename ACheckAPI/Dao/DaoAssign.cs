@@ -20,10 +20,11 @@ namespace ACheckAPI.Dao
             }
             else
             {
-                assign.UpdatedAt = DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss");
-                context.Assign.Update(assign);
+                var assignDB = context.Assign.Where(p => p.AssignId.Equals(assign.AssignId)).FirstOrDefault();
+                assign.CopyPropertiesTo<Assign>(assignDB);
+                assignDB.UpdatedAt = DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss");
+                context.Assign.Update(assignDB);
             }
-            //return context.SaveChanges();
         }
 
         public bool CheckAssignTime(string AssetID, string FromDate, string ToDate)

@@ -23,10 +23,8 @@ namespace ACheckAPI.Models
         public string UpdatedAt { get; set; }
         public string Updater { get; set; }
         public bool? Active { get; set; }
-
         [NotMapped]
         public string CategoryID { get; set; }
-
         [NotMapped]
         public string CategoryName { get; set; }
 

@@ -25,9 +25,17 @@ namespace ACheckAPI.Dao
             return context.Category.AsNoTracking().Where(p => p.Active == true).Include(p=>p.EavAttributeValue).ThenInclude(x=>x.Eav).AsEnumerable().ToList();
         }
 
-        public List<Category> GetCategoriesByID(string CategoryId)
+        public ViewCategory GetCategoriesByID(string CategoryId)
         {
-            return context.Category.AsNoTracking().Where(p => p.Active == true && p.ParentId.Equals(CategoryId)).Include(p => p.EavAttributeValue).ThenInclude(x => x.Eav).AsEnumerable().ToList();
+            DaoAsset daoAsset = new DaoAsset(context);
+            ViewCategory result = new ViewCategory();
+            result.lsSubCategory = context.Category.AsNoTracking().Where(p => p.Active == true && p.ParentId.Equals(CategoryId))
+                                                   .Include(p => p.EavAttributeValue).ThenInclude(x => x.Eav).AsEnumerable().ToList();
+
+            result.lsAsset = daoAsset.GetAssetByCategoryId(CategoryId);
+            result.countAsset = result.lsAsset.Count();
+            result.countSubCategory = result.lsSubCategory.Count();
+            return result;
             //return context.Category.AsNoTracking().Where(p => p.Active == true && p.ParentId.Equals(CategoryId)).AsEnumerable().ToList();
         }
 

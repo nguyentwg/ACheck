@@ -115,7 +115,7 @@ namespace ACheckAPI.Controllers
         [HttpPost]
         [Route("Add")]
 
-        public ReturnObject Add(ModelViews.ViewAsset entity)
+        public async Task<ReturnObject> Add(ModelViews.ViewAsset entity)
         {
             ReturnObject obj = new ReturnObject();
             obj.status = -1;
@@ -124,7 +124,37 @@ namespace ACheckAPI.Controllers
                 try
                 {
                     DaoAsset daoAsset = new DaoAsset(tWG_ACHECKContext);
-                    var result = daoAsset.Add(entity);
+                    int result = await daoAsset.Add(entity);
+                    if (result > 0)
+                    {
+                        obj.status = 1;
+                    }
+                    obj.value = result;
+                    transaction.Commit();
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    obj.status = -1;
+                    obj.message = ex.StackTrace;
+                }
+            }
+            return obj;
+        }
+
+        [HttpPost]
+        [Route("Update")]
+
+        public async Task<ReturnObject> Update(ModelViews.ViewAsset entity)
+        {
+            ReturnObject obj = new ReturnObject();
+            obj.status = -1;
+            using (var transaction = tWG_ACHECKContext.Database.BeginTransaction())
+            {
+                try
+                {
+                    DaoAsset daoAsset = new DaoAsset(tWG_ACHECKContext);
+                    int result = await daoAsset.Update(entity);
                     if (result > 0)
                     {
                         obj.status = 1;

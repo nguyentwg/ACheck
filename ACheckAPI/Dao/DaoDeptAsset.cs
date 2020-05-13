@@ -21,8 +21,13 @@ namespace ACheckAPI.Dao
             }
             else
             {
-                entity.UpdatedAt = DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss");
-                context.DeptAsset.Update(entity);
+                var entityDB = context.DeptAsset.Where(p => p.Guid.Equals(entity.Guid)).FirstOrDefault();
+                entity.CopyPropertiesTo<DeptAsset>(entityDB);
+                //entityDB.UpdatedAt = DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss");
+                context.DeptAsset.Update(entityDB);
+
+                //entity.UpdatedAt = DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss");
+                //context.DeptAsset.Update(entity);
             }
             //return context.SaveChanges();
         }

@@ -15,5 +15,6 @@ namespace ACheckAPI.Models
         public string NewValue { get; set; }
         public string Date { get; set; }
         public string KeyValues { get; set; }
+        public string Action { get; set; }
     }
 }

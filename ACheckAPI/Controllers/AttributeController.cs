@@ -63,7 +63,7 @@ namespace ACheckAPI.Controllers
 
         [HttpPost]
         [Route("AddAttribute")]
-        public ReturnObject AddAttribute(EavAttribute entity)
+        public async Task<ReturnObject> AddAttribute(EavAttribute entity)
         {
             ReturnObject obj = new ReturnObject();
             obj.status = -1;
@@ -72,7 +72,7 @@ namespace ACheckAPI.Controllers
                 try
                 {
                     DaoEAVAttribute daoEAVAttribute = new DaoEAVAttribute(tWG_ACHECKContext);
-                    var result = daoEAVAttribute.AddEavAttribute(entity);
+                    int result = await daoEAVAttribute.AddEavAttribute(entity);
                     if (result > 0)
                     {
                         obj.status = 1;
@@ -121,7 +121,7 @@ namespace ACheckAPI.Controllers
 
         [HttpPost]
         [Route("DeleteAttribute")]
-        public ReturnObject DeleteAttribute(string id)
+        public async Task<ReturnObject> DeleteAttribute(string id)
         {
             ReturnObject obj = new ReturnObject();
             obj.status = -1;
@@ -130,7 +130,7 @@ namespace ACheckAPI.Controllers
                 try
                 {
                     DaoEAVAttribute daoEAVAttribute = new DaoEAVAttribute(tWG_ACHECKContext);
-                    var result = daoEAVAttribute.DeleteEavAttribute(id);
+                    int result = await daoEAVAttribute.DeleteEavAttribute(id);
                     if (result > 0)
                     {
                         obj.status = 1;

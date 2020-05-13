@@ -68,12 +68,13 @@ namespace ACheckAPI.Controllers
             try
             {
                 DaoCategory daoCategory = new DaoCategory(tWG_ACHECKContext);
-                DaoAsset daoAsset = new DaoAsset(tWG_ACHECKContext);
+                //DaoAsset daoAsset = new DaoAsset(tWG_ACHECKContext);
                 var lsCategory = daoCategory.GetCategoriesByID(CategoryId);
-                var lsAsset = daoAsset.GetAssetByCategoryId(CategoryId);
-                var resultJson = new { lsCategory = lsCategory, lsAsset = lsAsset };
+                //var lsAsset = daoAsset.GetAssetByCategoryId(CategoryId);
+                //var resultJson = new { lsCategory = lsCategory, lsAsset = lsAsset };
+
                 obj.status = 1;
-                obj.value = resultJson;
+                obj.value = lsCategory;
             }
             catch(Exception ex)
             {
