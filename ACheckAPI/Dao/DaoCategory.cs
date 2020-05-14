@@ -8,6 +8,7 @@ using shortid;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Linq;
 using ACheckAPI.ModelViews;
+using ACheckAPI.Common;
 
 namespace ACheckAPI.Dao
 {
@@ -39,7 +40,7 @@ namespace ACheckAPI.Dao
             //return context.Category.AsNoTracking().Where(p => p.Active == true && p.ParentId.Equals(CategoryId)).AsEnumerable().ToList();
         }
 
-        public int Add(ViewAddCategory entity)
+        public async Task<int> Add(ViewAddCategory entity)
         {
             Category category = entity.Category;
             List<EavAttributeValue> lsAttributeValue = entity.EavAttributeValue;
@@ -54,34 +55,47 @@ namespace ACheckAPI.Dao
                 context.Category.Add(category);
                 foreach (EavAttributeValue item in lsAttributeValue)
                 {
+                    var eavGroup = context.EavAttribute.Where(p => p.Guid.Equals(item.EavId)).Select(p=>p.AttributeGroup).FirstOrDefault();
                     item.Guid = Guid.NewGuid().ToString().ToUpper();
                     item.CategoryId = category.CategoryId;
+                    item.AttributeGroup = eavGroup;
                     context.EavAttributeValue.Add(item);
                 }
             }
-            return context.SaveChanges();
+            return await context.SaveChangesAsync();
         }
 
-        public int Update(ViewAddCategory entity)
+        public async Task<int> Update(ViewAddCategory entity)
         {
-            //var a = context.Category.AsNoTracking().Where(p => p.CategoryId.Equals(entity.Category.CategoryId)).FirstOrDefault();
             Category category = entity.Category;
             List<EavAttributeValue> lsAttributeValue = entity.EavAttributeValue;
             DaoEAVAttribute daoEAVAttribute = new DaoEAVAttribute(context);
             bool checkCode = this.CheckUniqueCategoryCode(category.Code, category.CategoryId);
+            Category categoryUpdate = context.Category.Where(p => p.CategoryId.Equals(category.CategoryId)).FirstOrDefault();
+            category.CopyPropertiesTo<Category>(categoryUpdate);
             if (checkCode)
             {
-                category.UpdatedAt = DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss");
-                context.Category.Update(category);
-                context.EavAttributeValue.RemoveRange(context.EavAttributeValue.Where(p => p.CategoryId.Equals(category.CategoryId)));
+                categoryUpdate.UpdatedAt = DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss");
+                context.Category.Update(categoryUpdate);
                 foreach (EavAttributeValue item in lsAttributeValue)
                 {
-                    item.Guid = Guid.NewGuid().ToString().ToUpper();
-                    item.CategoryId = category.CategoryId;
-                    context.EavAttributeValue.Add(item);
+                    if (string.IsNullOrEmpty(item.Guid))
+                    {
+                        item.Guid = Guid.NewGuid().ToString().ToUpper();
+                        item.CategoryId = category.CategoryId;
+                        item.AttributeGroup = category.CategoryType;
+                        context.EavAttributeValue.Add(item);
+                    }
+                    else
+                    {
+                        var entityDB = context.EavAttributeValue.Where(p => p.Guid.Equals(item.Guid)).FirstOrDefault();
+                        item.CopyPropertiesTo<EavAttributeValue>(entityDB);
+                        entityDB.AttributeGroup = category.CategoryType;
+                        context.EavAttributeValue.Update(entityDB);
+                    }
                 }
             }
-            return context.SaveChanges();
+            return await context.SaveChangesAsync();
         }
 
         public int AddCategory(Category category)

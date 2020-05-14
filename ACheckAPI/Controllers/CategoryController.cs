@@ -107,14 +107,14 @@ namespace ACheckAPI.Controllers
 
         [HttpPost]
         [Route("Add")]
-        public ReturnObject Add(ViewAddCategory entity)
+        public async Task<ReturnObject> Add(ViewAddCategory entity)
         {
             ReturnObject obj = new ReturnObject();
             obj.status = -1;
             try
             {
                 DaoCategory daoCategory = new DaoCategory(tWG_ACHECKContext);
-                var result = daoCategory.Add(entity);
+                var result = await daoCategory.Add(entity);
                 if (result > 0)
                 {
                     obj.status = 1;
@@ -131,14 +131,14 @@ namespace ACheckAPI.Controllers
 
         [HttpPost]
         [Route("Update")]
-        public ReturnObject Update(ViewAddCategory entity)
+        public async Task<ReturnObject> Update(ViewAddCategory entity)
         {
             ReturnObject obj = new ReturnObject();
             obj.status = -1;
             try
             {
                 DaoCategory daoCategory = new DaoCategory(tWG_ACHECKContext);
-                var result = daoCategory.Update(entity);
+                var result = await daoCategory.Update(entity);
                 if (result > 0)
                 {
                     obj.status = 1;
