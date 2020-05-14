@@ -132,7 +132,7 @@ namespace ACheckAPI.Dao
                 }
                 if (deptAsset != null)
                 {
-                    //deptAsset.AssetId = asset.AssetId;
+                    deptAsset.AssetId = asset.AssetId;
                     daoDeptAsset.Add(deptAsset);
 
                 }
@@ -216,7 +216,7 @@ namespace ACheckAPI.Dao
             return context.SaveChanges();
         }
 
-        public int DeleteAsset(string assetID)
+        public async Task<int> DeleteAsset(string assetID)
         {
             var entity = context.Asset.AsNoTracking().Where(p => p.AssetId.Equals(assetID)).FirstOrDefault();
             if (entity != null)
@@ -232,7 +232,7 @@ namespace ACheckAPI.Dao
                     context.Assign.Update(item);
                 }
             }
-            return context.SaveChanges();
+            return await context.SaveChangesAsync();
         }
         
         public string GenerateAssetID()

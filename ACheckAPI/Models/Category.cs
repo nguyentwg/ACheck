@@ -9,6 +9,7 @@ namespace ACheckAPI.Models
         public Category()
         {
             AssetCategory = new HashSet<AssetCategory>();
+            EavAttributeValue = new HashSet<EavAttributeValue>();
         }
 
         public string CategoryId { get; set; }

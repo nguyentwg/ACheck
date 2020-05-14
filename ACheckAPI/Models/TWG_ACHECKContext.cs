@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using ACheckAPI.ModelViews;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
@@ -18,7 +19,6 @@ namespace ACheckAPI.Models
         private readonly ILoggerFactory loggerFactory;
         private readonly IHttpContextAccessor httpContextAccessor;
 
-
         public TWG_ACHECKContext()
         {
         }
@@ -31,7 +31,7 @@ namespace ACheckAPI.Models
         : base(options)
         {
             this.loggerFactory = loggerFactory;
-        } 
+        }
 
         public virtual DbSet<Asset> Asset { get; set; }
         public virtual DbSet<AssetCategory> AssetCategory { get; set; }
@@ -43,7 +43,7 @@ namespace ACheckAPI.Models
         public virtual DbSet<EavAttributeValue> EavAttributeValue { get; set; }
         public virtual DbSet<Floor> Floor { get; set; }
         public virtual DbSet<AuditTrail> AuditTrail { get; set; }
-        
+
 
         public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default(CancellationToken))
         {
@@ -52,7 +52,7 @@ namespace ACheckAPI.Models
             await AuditTemporaryProperties(temoraryAuditEntities);
             return result;
         }
-        
+
         async Task AuditTemporaryProperties(IEnumerable<Tuple<EntityEntry, AuditTrail>> temporatyEntities)
         {
             if (temporatyEntities != null && temporatyEntities.Any())
@@ -65,36 +65,40 @@ namespace ACheckAPI.Models
             }
             await Task.CompletedTask;
         }
-        
+
         async Task<IEnumerable<Tuple<EntityEntry, AuditTrail>>> AuditNonTemporaryProperties()
         {
             Dictionary<string, string> abc = new Dictionary<string, string>();
             ChangeTracker.DetectChanges();
             var entitiesToTrack = ChangeTracker.Entries().Where(e => !(e.Entity is AuditTrail) && e.State != EntityState.Detached && e.State != EntityState.Unchanged);
-            var a =
-                entitiesToTrack.Where(e => !e.Properties.Any(p => p.IsTemporary)).Select(e => new AuditTrail()
-                {
-                    AuditTrailId = Guid.NewGuid().ToString(),
-                    Action = Enum.GetName(typeof(EntityState), e.State),
-                    Table = e.Metadata.Relational().TableName,
-                    Date = DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss"),
-                    KeyValues = JsonConvert.SerializeObject(e.Properties.Where(p => p.Metadata.IsPrimaryKey()).ToDictionary(p => p.Metadata.Name, p => p.CurrentValue).NullIfEmpty()),
-                    NewValue = JsonConvert.SerializeObject(e.Properties.Where(p => e.State == EntityState.Added || e.State == EntityState.Modified).ToDictionary(p => p.Metadata.Name, p => p.CurrentValue).NullIfEmpty()),
-                    OldValue = JsonConvert.SerializeObject(e.Properties.Where(p => e.State == EntityState.Deleted || e.State == EntityState.Modified).ToDictionary(p => p.Metadata.Name, p => p.OriginalValue).NullIfEmpty())
-                }).ToList();
+            var a = entitiesToTrack.Where(e => !e.Properties.Any(p => p.IsTemporary)).Select(e => new AuditTrail()
+            {
+                Action = Enum.GetName(typeof(EntityState), e.State),
+                Table = e.Metadata.Relational().TableName,
+                Date = DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss"),
+                KeyValues = JsonConvert.SerializeObject(e.Properties.Where(p => p.Metadata.IsPrimaryKey()).ToDictionary(p => p.Metadata.Name, p => p.CurrentValue).NullIfEmpty()),
+                NewValue = JsonConvert.SerializeObject(e.Properties.Where(p => e.State == EntityState.Added || e.State == EntityState.Modified).ToDictionary(p => p.Metadata.Name, p => p.CurrentValue).NullIfEmpty()),
+                OldValue = JsonConvert.SerializeObject(e.Properties.Where(p => e.State == EntityState.Deleted || e.State == EntityState.Modified).ToDictionary(p => p.Metadata.Name, p => p.OriginalValue).NullIfEmpty())
+            }).ToList();
+            List<AuditTrail> lsAuditTrail = new List<AuditTrail>();
+            foreach (var res in a)
+            {
+                string json = JsonConvert.DeserializeObject(res.OldValue == "null" ? "{}" : res.OldValue).DetailedCompare(JsonConvert.DeserializeObject(res.NewValue == "null" ? "{}" : res.NewValue));
+                ViewAudit CompareObject = JsonConvert.DeserializeObject<ViewAudit>(json);
+                AuditTrail auditTrailObj = new AuditTrail();
+                auditTrailObj.AuditTrailId = Guid.NewGuid().ToString();
+                auditTrailObj.Action = res.Action;
+                auditTrailObj.Table = res.Table;
+                auditTrailObj.KeyValues = res.KeyValues;
+                auditTrailObj.Date = DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss");
+                auditTrailObj.OldValue = JsonConvert.SerializeObject(CompareObject.oldValue);
+                auditTrailObj.NewValue = JsonConvert.SerializeObject(CompareObject.newValue);
+                lsAuditTrail.Add(auditTrailObj);
+            }
             await AuditTrail.AddRangeAsync(
-                entitiesToTrack.Where(e => !e.Properties.Any(p => p.IsTemporary)).Select(e => new AuditTrail()
-                {
-                    AuditTrailId= Guid.NewGuid().ToString(),
-                    Action = Enum.GetName(typeof(EntityState), e.State),
-                    Table = e.Metadata.Relational().TableName,
-                    Date = DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss"),
-                    KeyValues = JsonConvert.SerializeObject(e.Properties.Where(p => p.Metadata.IsPrimaryKey()).ToDictionary(p => p.Metadata.Name, p => p.CurrentValue).NullIfEmpty()),
-                    NewValue = JsonConvert.SerializeObject(e.Properties.Where(p => e.State == EntityState.Added || e.State == EntityState.Modified).ToDictionary(p => p.Metadata.Name, p => p.CurrentValue).NullIfEmpty()),
-                    OldValue = JsonConvert.SerializeObject(e.Properties.Where(p => e.State == EntityState.Deleted || e.State == EntityState.Modified).ToDictionary(p => p.Metadata.Name, p => p.OriginalValue).NullIfEmpty())
-                }).ToList()
+                lsAuditTrail.Where(p => p.NewValue != "{}" && p.OldValue != "{}").ToList()
             );
-            
+
             return entitiesToTrack.Where(e => e.Properties.Any(p => p.IsTemporary))
                  .Select(e => new Tuple<EntityEntry, AuditTrail>(
                      e,
@@ -425,7 +429,7 @@ namespace ACheckAPI.Models
                 entity.Property(e => e.Value).HasMaxLength(50);
 
                 entity.Property(e => e.AttributeGroup).HasMaxLength(50);
-                
+
                 entity.HasOne(d => d.Eav)
                     .WithMany(p => p.EavAttributeValue)
                     .HasForeignKey(d => d.EavId)

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using ACheckAPI.Common;
 using ACheckAPI.Dao;
 using ACheckAPI.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -12,6 +13,7 @@ using Newtonsoft.Json.Linq;
 
 namespace ACheckAPI.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class AssetController : BaseController
@@ -27,7 +29,6 @@ namespace ACheckAPI.Controllers
             try
             {
                 DaoAsset daoAsset = new DaoAsset(tWG_ACHECKContext);
-                //var result = daoAsset.GetAssetByID(AssetID);
                 var result = daoAsset.GetAssetByAssetID(AssetID);
                 obj.status = 1;
                 obj.value = result;
@@ -206,14 +207,14 @@ namespace ACheckAPI.Controllers
         [HttpPost]
         [Route("DeleteAsset")]
 
-        public ReturnObject DeleteAsset(string AssetId)
+        public async Task<ReturnObject> DeleteAsset(string AssetId)
         {
             ReturnObject obj = new ReturnObject();
             obj.status = -1;
             try
             {
                 DaoAsset daoAsset = new DaoAsset(tWG_ACHECKContext);
-                var result = daoAsset.DeleteAsset(AssetId);
+                var result = await daoAsset.DeleteAsset(AssetId);
                 if (result > 0)
                 {
                     obj.status = 1;

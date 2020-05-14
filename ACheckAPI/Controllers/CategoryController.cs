@@ -79,7 +79,27 @@ namespace ACheckAPI.Controllers
             }
             return obj;
         }
-        
+
+        [HttpGet]
+        [Route("GetCategoryByGroupID")]
+        public ReturnObject GetCategoryByGroupID(string GroupId)
+        {
+            ReturnObject obj = new ReturnObject();
+            try
+            {
+                DaoCategory daoCategory = new DaoCategory(tWG_ACHECKContext);
+                var lsCategory = daoCategory.GetCategoriesByGroupID(GroupId);
+                obj.status = 1;
+                obj.value = lsCategory;
+            }
+            catch (Exception ex)
+            {
+                obj.status = -1;
+                obj.message = ex.StackTrace;
+            }
+            return obj;
+        }
+
         //[HttpPost]
         //[Route("AddCategory")]
 

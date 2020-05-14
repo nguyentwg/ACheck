@@ -8,8 +8,6 @@ using ACheckAPI.Common;
 using ACheckAPI.Dao;
 using Microsoft.AspNetCore.Authorization;
 
-// For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
 namespace ACheckAPI.Controllers
 {
     [Authorize]
