@@ -68,11 +68,7 @@ namespace ACheckAPI.Controllers
             try
             {
                 DaoCategory daoCategory = new DaoCategory(tWG_ACHECKContext);
-                //DaoAsset daoAsset = new DaoAsset(tWG_ACHECKContext);
                 var lsCategory = daoCategory.GetCategoriesByID(CategoryId);
-                //var lsAsset = daoAsset.GetAssetByCategoryId(CategoryId);
-                //var resultJson = new { lsCategory = lsCategory, lsAsset = lsAsset };
-
                 obj.status = 1;
                 obj.value = lsCategory;
             }
@@ -84,30 +80,30 @@ namespace ACheckAPI.Controllers
             return obj;
         }
         
-        [HttpPost]
-        [Route("AddCategory")]
+        //[HttpPost]
+        //[Route("AddCategory")]
 
-        public ReturnObject AddCategory(Category entity)
-        {
-            ReturnObject obj = new ReturnObject();
-            obj.status = -1;
-            try
-            {
-                DaoCategory daoCategory = new DaoCategory(tWG_ACHECKContext);
-                var result = daoCategory.AddCategory(entity);
-                if (result > 0)
-                {
-                    obj.status = 1;
-                }
-                obj.value = result;
-            }
-            catch (Exception ex)
-            {
-                obj.status = -1;
-                obj.message = ex.StackTrace;
-            }
-            return obj;
-        }
+        //public ReturnObject AddCategory(Category entity)
+        //{
+        //    ReturnObject obj = new ReturnObject();
+        //    obj.status = -1;
+        //    try
+        //    {
+        //        DaoCategory daoCategory = new DaoCategory(tWG_ACHECKContext);
+        //        var result = daoCategory.AddCategory(entity);
+        //        if (result > 0)
+        //        {
+        //            obj.status = 1;
+        //        }
+        //        obj.value = result;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        obj.status = -1;
+        //        obj.message = ex.StackTrace;
+        //    }
+        //    return obj;
+        //}
 
         [HttpPost]
         [Route("Add")]
@@ -157,43 +153,43 @@ namespace ACheckAPI.Controllers
             return obj;
         }
 
-        [HttpPost]
-        [Route("UpdateCategory")]
+        //[HttpPost]
+        //[Route("UpdateCategory")]
 
-        public ReturnObject UpdateCategory(Category entity)
-        {
-            ReturnObject obj = new ReturnObject();
-            obj.status = -1;
-            try
-            {
-                DaoCategory daoCategory = new DaoCategory(tWG_ACHECKContext);
-                var result = daoCategory.UpdateCategory(entity);
-                if (result > 0)
-                {
-                    obj.status = 1;
-                }
-                obj.value = result;
-            }
-            catch (Exception ex)
-            {
-                obj.status = -1;
-                obj.message = ex.StackTrace;
-            }
-            return obj;
-        }
+        //public ReturnObject UpdateCategory(Category entity)
+        //{
+        //    ReturnObject obj = new ReturnObject();
+        //    obj.status = -1;
+        //    try
+        //    {
+        //        DaoCategory daoCategory = new DaoCategory(tWG_ACHECKContext);
+        //        var result = daoCategory.UpdateCategory(entity);
+        //        if (result > 0)
+        //        {
+        //            obj.status = 1;
+        //        }
+        //        obj.value = result;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        obj.status = -1;
+        //        obj.message = ex.StackTrace;
+        //    }
+        //    return obj;
+        //}
 
 
         [HttpPost]
         [Route("DeleteCategory")]
 
-        public ReturnObject UpdateCategory(string CategoryId)
+        public async Task<ReturnObject> UpdateCategory(string CategoryId)
         {
             ReturnObject obj = new ReturnObject();
             obj.status = -1;
             try
             {
                 DaoCategory daoCategory = new DaoCategory(tWG_ACHECKContext);
-                var result = daoCategory.DeleteCategory(CategoryId);
+                int result = await daoCategory.DeleteCategory(CategoryId);
                 if (result > 0)
                 {
                     obj.status = 1;
@@ -212,14 +208,14 @@ namespace ACheckAPI.Controllers
         [HttpPost]
         [Route("ArrangeCategory")]
 
-        public ReturnObject ArrangeCategory(List<ModelViews.ViewArrangeCategory> lsentity)
+        public async Task<ReturnObject> ArrangeCategory(List<ModelViews.ViewArrangeCategory> lsentity)
         {
             ReturnObject obj = new ReturnObject();
             obj.status = -1;
             try
             {
                 DaoCategory daoCategory = new DaoCategory(tWG_ACHECKContext);
-                var result = daoCategory.ArrangeCategory(lsentity);
+                int result = await daoCategory.ArrangeCategory(lsentity);
                 if (result > 0)
                 {
                     obj.status = 1;

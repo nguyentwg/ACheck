@@ -111,19 +111,19 @@ namespace ACheckAPI.Dao
             return context.SaveChanges();
         }
 
-        public int DeleteCategory(string CategoryId)
+        public async Task<int> DeleteCategory(string CategoryId)
         {
-            var entity = context.Category.AsNoTracking().Where(p => p.CategoryId.Equals(CategoryId)).FirstOrDefault();
+            var entity = context.Category.Where(p => p.CategoryId.Equals(CategoryId)).FirstOrDefault();
             if (entity != null)
             {
                 entity.UpdatedAt = DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss");
                 entity.Active = false;
                 context.Category.Update(entity);
             }
-            return context.SaveChanges();
+            return await context.SaveChangesAsync();
         }
 
-        public int ArrangeCategory(List<ModelViews.ViewArrangeCategory> lsEntity)
+        public async Task<int> ArrangeCategory(List<ModelViews.ViewArrangeCategory> lsEntity)
         {
             foreach(ModelViews.ViewArrangeCategory item in lsEntity)
             {
@@ -135,7 +135,7 @@ namespace ACheckAPI.Dao
                     context.Category.Update(category);
                 }
             }
-            return context.SaveChanges();
+            return await context.SaveChangesAsync();
         }
 
         public string GenerateCategoryID()
