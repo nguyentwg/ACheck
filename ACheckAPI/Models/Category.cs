@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ACheckAPI.Models
 {
@@ -26,6 +27,12 @@ namespace ACheckAPI.Models
         public int? No { get; set; }
         public string Path { get; set; }
         public string CategoryType { get; set; }
+
+        [NotMapped]
+        public int CountSubCategory { get; set; }
+        [NotMapped]
+        public int CountAsset { get; set; }
+
         public virtual ICollection<AssetCategory> AssetCategory { get; set; }
         public virtual ICollection<EavAttributeValue> EavAttributeValue { get; set; }
     }

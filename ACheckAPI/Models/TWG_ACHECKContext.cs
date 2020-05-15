@@ -201,9 +201,8 @@ namespace ACheckAPI.Models
                     .ValueGeneratedNever();
 
                 entity.Property(e => e.Active).HasDefaultValueSql("((1))");
-
+                
                 entity.Property(e => e.AssetId)
-                    //.IsRequired()
                     .HasColumnName("Asset_ID")
                     .HasMaxLength(50);
 

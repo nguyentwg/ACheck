@@ -47,7 +47,7 @@ namespace ACheckAPI.Models
             var s = _newObject.ToObject<Dictionary<string, object>>();
             foreach (var property in _oldObject.ToObject<Dictionary<string, object>>())
             {
-                if (!property.Value.Equals(s[property.Key]))
+                if (property.Value != null && s[property.Key]!= null && !property.Value.Equals(s[property.Key]))
                 {
                     oldValue.Add(property.Key, property.Value.ToString());
                     newValue.Add(property.Key, s[property.Key].ToString());

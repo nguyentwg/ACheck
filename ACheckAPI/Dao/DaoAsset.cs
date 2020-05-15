@@ -85,6 +85,25 @@ namespace ACheckAPI.Dao
                 asset.CreatedAt = DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss");
                 asset.UpdatedAt = DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss");
                 context.Asset.Add(asset);
+
+                if(asset.CategoryID != null)
+                {
+                    EavAttributeValue cate = new EavAttributeValue();
+                    cate.Guid = Guid.NewGuid().ToString().ToUpper();
+                    cate.CategoryId = asset.AssetId;
+                    cate.EavId = asset.CategoryID;
+                    cate.AttributeGroup = EnumEAV.EAV_Type.AssetCategory.ToString();
+                    context.EavAttributeValue.Add(cate);
+                }
+                if(asset.LocationID != null)
+                {
+                    EavAttributeValue cate = new EavAttributeValue();
+                    cate.Guid = Guid.NewGuid().ToString().ToUpper();
+                    cate.CategoryId = asset.AssetId;
+                    cate.EavId = asset.LocationID;
+                    cate.AttributeGroup = EnumEAV.EAV_Type.AssetLocation.ToString();
+                    context.EavAttributeValue.Add(cate);
+                }
                 if (assign != null)
                 {
                     assign.AssetId = asset.AssetId;
@@ -99,7 +118,7 @@ namespace ACheckAPI.Dao
                 {
                     item.Guid = Guid.NewGuid().ToString().ToUpper();
                     item.CategoryId = asset.AssetId;
-                    item.AttributeGroup = !string.IsNullOrEmpty(item.Value) ? EnumEAV.EAV_Type.AssetAttribute.ToString() : EnumEAV.EAV_Type.AssetCategory.ToString();
+                    item.AttributeGroup = EnumEAV.EAV_Type.AssetAttribute.ToString();
                     context.EavAttributeValue.Add(item);
                 }
             }
@@ -127,7 +146,7 @@ namespace ACheckAPI.Dao
                 context.Asset.Update(assetDB);
                 if (assign != null)
                 {
-                    assign.AssetId = assetDB.AssetId;
+                    assign.AssetId = asset.AssetId;
                     daoAssign.AssignAsset(assign);
                 }
                 if (deptAsset != null)
@@ -162,11 +181,16 @@ namespace ACheckAPI.Dao
                      join asset_cate in context.EavAttributeValue on asset.AssetId equals asset_cate.CategoryId
                      where (asset_cate.AttributeGroup??" ").Equals(EnumEAV.EAV_Type.AssetCategory.ToString())
                      join Cate in context.Category on asset_cate.EavId equals Cate.CategoryId
+                     join asset_location in context.EavAttributeValue on asset.AssetId equals asset_location.CategoryId
+                     where (asset_location.AttributeGroup ?? " ").Equals(EnumEAV.EAV_Type.AssetLocation.ToString())
+                     join Area in context.Category on asset_location.EavId equals Area.CategoryId
                      where asset.AssetId.Equals(AssetID)
-                     select new { asset, Cate }).AsEnumerable().Select(x =>
+                     select new { asset, Cate, Area }).AsEnumerable().Select(x =>
                      {
                          x.asset.CategoryID = x.Cate.CategoryId;
                          x.asset.CategoryName = x.Cate.CategoryName;
+                         x.asset.LocationID = x.Area.CategoryId;
+                         x.asset.LocationName = x.Area.CategoryName;
                          return x.asset;
                      }).AsEnumerable().FirstOrDefault();
             

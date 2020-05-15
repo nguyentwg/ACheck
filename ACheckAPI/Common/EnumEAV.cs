@@ -17,6 +17,7 @@ namespace ACheckAPI.Common
             BuildingAttribute,
             FloorAttribute,
             AreaAttribute,
+            AssetLocation,
         }
     }
 }

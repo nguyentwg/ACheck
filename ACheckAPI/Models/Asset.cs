@@ -28,6 +28,11 @@ namespace ACheckAPI.Models
         [NotMapped]
         public string CategoryName { get; set; }
 
+        [NotMapped]
+        public string LocationID { get; set; }
+        [NotMapped]
+        public string LocationName { get; set; }
+
         public virtual ICollection<AssetCategory> AssetCategory { get; set; }
         public virtual ICollection<Assign> Assign { get; set; }
         public virtual ICollection<DeptAsset> DeptAsset { get; set; }

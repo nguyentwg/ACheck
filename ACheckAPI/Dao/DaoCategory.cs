@@ -31,10 +31,17 @@ namespace ACheckAPI.Dao
             DaoAsset daoAsset = new DaoAsset(context);
             ViewCategory result = new ViewCategory();
             result.lsSubCategory = context.Category.AsNoTracking().Where(p => p.Active == true && p.ParentId.Equals(CategoryId))
-                                                   .Include(p => p.EavAttributeValue).ThenInclude(x => x.Eav).AsEnumerable().ToList();
-
+                                                   //.Include(p => p.EavAttributeValue)
+                                                   //.ThenInclude(x => x.Eav).AsEnumerable()
+                                                   .ToList();
+            result.lsSubCategory.ForEach(e =>
+            {
+                e.CountAsset = context.EavAttributeValue.Where(p => p.EavId.Equals(e.CategoryId) && p.Active == true).Count();
+                e.CountSubCategory = context.Category.Where(p => p.ParentId.Equals(e.CategoryId) && p.Active == true).Count();
+            });
+            
             result.lsAsset = daoAsset.GetAssetByCategoryId(CategoryId);
-            result.countAsset = result.lsAsset.Count();
+            result.countAsset = result.lsAsset.Count() + result.lsSubCategory.Sum(p => p.CountAsset);
             result.countSubCategory = result.lsSubCategory.Count();
             return result;
         }
@@ -44,7 +51,11 @@ namespace ACheckAPI.Dao
             ViewCategory result = new ViewCategory();
             result.lsSubCategory = context.Category.AsNoTracking().Where(p => p.Active == true && p.CategoryType.Equals(GroupId))
                                                    .Include(p => p.EavAttributeValue).ThenInclude(x => x.Eav).AsEnumerable().ToList();
-            
+            result.lsSubCategory.ForEach(e =>
+            {
+                e.CountAsset = context.EavAttributeValue.Where(p => p.EavId.Equals(e.CategoryId) && p.Active == true).Count();
+                e.CountSubCategory = context.Category.Where(p => p.ParentId.Equals(e.CategoryId) && p.Active == true).Count();
+            });
             result.countSubCategory = result.lsSubCategory.Count();
             return result;
         }
@@ -55,6 +66,8 @@ namespace ACheckAPI.Dao
             List<EavAttributeValue> lsAttributeValue = entity.EavAttributeValue;
             DaoEAVAttribute daoEAVAttribute = new DaoEAVAttribute(context);
             category.CategoryId = this.GenerateCategoryID();
+            category.Code = string.IsNullOrEmpty(category.Code) ? category.CategoryId : category.Code;
+            category.ParentId = string.IsNullOrEmpty(category.ParentId) ? "0" : category.ParentId;
             bool checkCode = this.CheckUniqueCategoryCode(category.Code, category.CategoryId);
             bool checkID = this.CheckUniqueCategoryID(category.CategoryId);
             if (checkCode && checkID)
@@ -79,6 +92,7 @@ namespace ACheckAPI.Dao
             Category category = entity.Category;
             List<EavAttributeValue> lsAttributeValue = entity.EavAttributeValue;
             DaoEAVAttribute daoEAVAttribute = new DaoEAVAttribute(context);
+            category.Code = string.IsNullOrEmpty(category.Code) ? category.CategoryId : category.Code;
             bool checkCode = this.CheckUniqueCategoryCode(category.Code, category.CategoryId);
             Category categoryUpdate = context.Category.Where(p => p.CategoryId.Equals(category.CategoryId)).FirstOrDefault();
             category.CopyPropertiesTo<Category>(categoryUpdate);
