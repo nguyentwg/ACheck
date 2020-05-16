@@ -16,7 +16,7 @@ namespace ACheckAPI.Dao
         public DaoAsset(TWG_ACHECKContext _context) : base(_context) { }
         public List<Asset> GetAll()
         {
-            var result = (from asset in context.Asset
+            var result = (from asset in context.Asset.Include(p=>p.Image).Include(p => p.Assign).Include(p => p.DeptAsset)
                           join asset_cate in context.EavAttributeValue on asset.AssetId equals asset_cate.CategoryId
                           where asset_cate.AttributeGroup != null && asset_cate.AttributeGroup.Equals(EnumEAV.EAV_Type.AssetCategory.ToString())
                           join Cate in context.Category on asset_cate.EavId equals Cate.CategoryId
@@ -31,7 +31,7 @@ namespace ACheckAPI.Dao
                               x.asset.CategoryID = x.CategoryId;
                               x.asset.CategoryName = x.CategoryName;
                               x.asset.LocationID = x.LocationID;
-                              x.asset.LocationName = x.LocationName;
+                              x.asset.LocationName = x.LocationName; 
                               return x.asset;
                           }).AsEnumerable().ToList();
             return result;
@@ -39,7 +39,7 @@ namespace ACheckAPI.Dao
 
         public List<Asset> GetAssetByCategoryId(string CategoryId)
         {
-            var result = (from asset in context.Asset
+            var result = (from asset in context.Asset.Include(p => p.Image).Include(p => p.Assign).Include(p => p.DeptAsset)
                           join asset_cate in context.EavAttributeValue on asset.AssetId equals asset_cate.CategoryId
                           where asset_cate.AttributeGroup != null && asset_cate.EavId.Equals(CategoryId) && asset_cate.AttributeGroup.Equals(EnumEAV.EAV_Type.AssetCategory.ToString())
                           join Cate in context.Category on asset_cate.EavId equals Cate.CategoryId
@@ -77,7 +77,7 @@ namespace ACheckAPI.Dao
             {
                 AssetName = "";
             }
-            var result = (from asset in context.Asset
+            var result = (from asset in context.Asset.Include(p => p.Image).Include(p => p.Assign).Include(p => p.DeptAsset)
                           join asset_cate in context.EavAttributeValue on asset.AssetId equals asset_cate.CategoryId
                           where asset_cate.AttributeGroup != null && asset_cate.AttributeGroup.Equals(EnumEAV.EAV_Type.AssetCategory.ToString())
                           join Cate in context.Category on asset_cate.EavId equals Cate.CategoryId
@@ -217,10 +217,10 @@ namespace ACheckAPI.Dao
             return await context.SaveChangesAsync();
         }
 
-        public ViewAsset GetAssetByAssetID(string AssetID)
+        public Asset GetAssetByAssetID(string AssetID)
         {
-            ViewAsset res = new ViewAsset();
-            var assetObj = (from asset in context.Asset
+            Asset res = new Asset();
+            res = (from asset in context.Asset.Include(p => p.Image).Include(p=>p.Assign).Include(p=>p.DeptAsset)
                             join asset_cate in context.EavAttributeValue on asset.AssetId equals asset_cate.CategoryId
                             where (asset_cate.AttributeGroup ?? " ").Equals(EnumEAV.EAV_Type.AssetCategory.ToString())
                             join Cate in context.Category on asset_cate.EavId equals Cate.CategoryId
@@ -238,13 +238,6 @@ namespace ACheckAPI.Dao
                                 x.asset.LocationName = x.LocationName;
                                 return x.asset;
                             }).AsEnumerable().FirstOrDefault();
-
-            var AssetAttribute = context.EavAttributeValue.AsNoTracking().Where(p => p.Active == true && p.CategoryId.Equals(AssetID) && p.AttributeGroup.Equals(EnumEAV.EAV_Type.AssetAttribute.ToString())).Include(p => p.Eav).AsEnumerable().ToList();
-            res.asset = assetObj;
-            res.lsImage = context.Image.Where(p => p.ReferenceId.Equals(AssetID)).AsNoTracking().AsEnumerable().ToList();
-            res.assign = context.Assign.Where(p => p.AssetId.Equals(assetObj.AssetId) && p.Active == true).AsEnumerable().FirstOrDefault();
-            res.DeptAsset = context.DeptAsset.Where(p => p.AssetId.Equals(assetObj.AssetId) && p.Active == true).AsEnumerable().FirstOrDefault();
-            res.EavAttributeValue = AssetAttribute;
             return res;
         }
 
