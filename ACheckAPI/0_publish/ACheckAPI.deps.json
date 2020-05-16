@@ -1,7 +1,7 @@
 {
   "runtimeTarget": {
     "name": ".NETCoreApp,Version=v2.2/win-x64",
-    "signature": "6db146ccee1f8b9932a2046c1cc99b6fd4a7a3b2"
+    "signature": "efb48a55ff479a5bfd763bbc1883244ccf8f48f5"
   },
   "compilationOptions": {
     "defines": [
@@ -25,8 +25,11 @@
       "ACheckAPI/1.0.0": {
         "dependencies": {
           "Microsoft.AspNetCore.App": "2.2.8",
+          "Microsoft.Azure.Storage.Blob": "11.1.5",
+          "Microsoft.Azure.Storage.File": "11.1.5",
           "Microsoft.NETCore.App": "2.2.8",
           "Microsoft.VisualStudio.Web.CodeGeneration.Design": "2.2.3",
+          "WindowsAzure.Storage": "9.3.3",
           "shortid": "2.0.1",
           "TWG_HR_API": "1.0.0.0",
           "TWG_HR_AuthenticationService": "1.0.0.0"
@@ -1179,6 +1182,43 @@
         },
         "compile": {
           "lib/netstandard2.0/Microsoft.AspNetCore.WebUtilities.dll": {}
+        }
+      },
+      "Microsoft.Azure.KeyVault.Core/2.0.4": {
+        "dependencies": {
+          "System.Runtime": "4.3.0",
+          "System.Threading.Tasks": "4.3.0"
+        },
+        "compile": {
+          "lib/netstandard1.5/Microsoft.Azure.KeyVault.Core.dll": {}
+        }
+      },
+      "Microsoft.Azure.Storage.Blob/11.1.5": {
+        "dependencies": {
+          "Microsoft.Azure.Storage.Common": "11.1.5",
+          "NETStandard.Library": "2.0.3"
+        },
+        "compile": {
+          "lib/netstandard2.0/Microsoft.Azure.Storage.Blob.dll": {}
+        }
+      },
+      "Microsoft.Azure.Storage.Common/11.1.5": {
+        "dependencies": {
+          "Microsoft.Azure.KeyVault.Core": "2.0.4",
+          "NETStandard.Library": "2.0.3",
+          "Newtonsoft.Json": "11.0.2"
+        },
+        "compile": {
+          "lib/netstandard2.0/Microsoft.Azure.Storage.Common.dll": {}
+        }
+      },
+      "Microsoft.Azure.Storage.File/11.1.5": {
+        "dependencies": {
+          "Microsoft.Azure.Storage.Common": "11.1.5",
+          "NETStandard.Library": "2.0.3"
+        },
+        "compile": {
+          "lib/netstandard2.0/Microsoft.Azure.Storage.File.dll": {}
         }
       },
       "Microsoft.CodeAnalysis.Analyzers/1.1.0": {},
@@ -3150,6 +3190,15 @@
           "System.Xml.XPath": "4.3.0"
         }
       },
+      "WindowsAzure.Storage/9.3.3": {
+        "dependencies": {
+          "NETStandard.Library": "2.0.3",
+          "Newtonsoft.Json": "11.0.2"
+        },
+        "compile": {
+          "lib/netstandard1.3/Microsoft.WindowsAzure.Storage.dll": {}
+        }
+      },
       "TWG_HR_API/1.0.0.0": {
         "compile": {
           "TWG_HR_API.dll": {}
@@ -3165,8 +3214,11 @@
       "ACheckAPI/1.0.0": {
         "dependencies": {
           "Microsoft.AspNetCore.App": "2.2.8",
+          "Microsoft.Azure.Storage.Blob": "11.1.5",
+          "Microsoft.Azure.Storage.File": "11.1.5",
           "Microsoft.NETCore.App": "2.2.8",
           "Microsoft.VisualStudio.Web.CodeGeneration.Design": "2.2.3",
+          "WindowsAzure.Storage": "9.3.3",
           "shortid": "2.0.1",
           "TWG_HR_API": "1.0.0.0",
           "TWG_HR_AuthenticationService": "1.0.0.0"
@@ -4605,6 +4657,55 @@
           "lib/netstandard2.0/Microsoft.AspNetCore.WebUtilities.dll": {
             "assemblyVersion": "2.2.0.0",
             "fileVersion": "2.2.0.18316"
+          }
+        }
+      },
+      "Microsoft.Azure.KeyVault.Core/2.0.4": {
+        "dependencies": {
+          "System.Runtime": "4.3.0",
+          "System.Threading.Tasks": "4.3.0"
+        },
+        "runtime": {
+          "lib/netstandard1.5/Microsoft.Azure.KeyVault.Core.dll": {
+            "assemblyVersion": "2.0.0.0",
+            "fileVersion": "2.0.4.0"
+          }
+        }
+      },
+      "Microsoft.Azure.Storage.Blob/11.1.5": {
+        "dependencies": {
+          "Microsoft.Azure.Storage.Common": "11.1.5",
+          "NETStandard.Library": "2.0.3"
+        },
+        "runtime": {
+          "lib/netstandard2.0/Microsoft.Azure.Storage.Blob.dll": {
+            "assemblyVersion": "11.1.5.0",
+            "fileVersion": "11.1.5.0"
+          }
+        }
+      },
+      "Microsoft.Azure.Storage.Common/11.1.5": {
+        "dependencies": {
+          "Microsoft.Azure.KeyVault.Core": "2.0.4",
+          "NETStandard.Library": "2.0.3",
+          "Newtonsoft.Json": "11.0.2"
+        },
+        "runtime": {
+          "lib/netstandard2.0/Microsoft.Azure.Storage.Common.dll": {
+            "assemblyVersion": "11.1.5.0",
+            "fileVersion": "11.1.5.0"
+          }
+        }
+      },
+      "Microsoft.Azure.Storage.File/11.1.5": {
+        "dependencies": {
+          "Microsoft.Azure.Storage.Common": "11.1.5",
+          "NETStandard.Library": "2.0.3"
+        },
+        "runtime": {
+          "lib/netstandard2.0/Microsoft.Azure.Storage.File.dll": {
+            "assemblyVersion": "11.1.5.0",
+            "fileVersion": "11.1.5.0"
           }
         }
       },
@@ -7523,6 +7624,18 @@
           "System.Xml.XPath": "4.3.0"
         }
       },
+      "WindowsAzure.Storage/9.3.3": {
+        "dependencies": {
+          "NETStandard.Library": "2.0.3",
+          "Newtonsoft.Json": "11.0.2"
+        },
+        "runtime": {
+          "lib/netstandard1.3/Microsoft.WindowsAzure.Storage.dll": {
+            "assemblyVersion": "9.3.2.0",
+            "fileVersion": "9.3.2.0"
+          }
+        }
+      },
       "TWG_HR_API/1.0.0.0": {
         "runtime": {
           "TWG_HR_API.dll": {
@@ -8211,6 +8324,34 @@
       "sha512": "sha512-9ErxAAKaDzxXASB/b5uLEkLgUWv1QbeVxyJYEHQwMaxXOeFFVkQxiq8RyfVcifLU7NR0QY0p3acqx4ZpYfhHDg==",
       "path": "microsoft.aspnetcore.webutilities/2.2.0",
       "hashPath": "microsoft.aspnetcore.webutilities.2.2.0.nupkg.sha512"
+    },
+    "Microsoft.Azure.KeyVault.Core/2.0.4": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-BSdPbmZ1BvptdfgECniezEwfQLAyT11MsOm4btXdswjIm8BkLK9eX//yO8ExlafErJg1tAKpCxfNyLTHSlXJvA==",
+      "path": "microsoft.azure.keyvault.core/2.0.4",
+      "hashPath": "microsoft.azure.keyvault.core.2.0.4.nupkg.sha512"
+    },
+    "Microsoft.Azure.Storage.Blob/11.1.5": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-9NZIog7D9+7jX55Yq0ANhbEmUW8Nosviv37tOQg/eQJsZkdyuZFj6vW/HT2SptGA6bJyl/X2Xl2VAFOl4X96YA==",
+      "path": "microsoft.azure.storage.blob/11.1.5",
+      "hashPath": "microsoft.azure.storage.blob.11.1.5.nupkg.sha512"
+    },
+    "Microsoft.Azure.Storage.Common/11.1.5": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-CaCYXlFQPiU4u1959PQLhPCHH7UbAt1hYsewnEF+dsaJu5l2mOEaOXmNjBJGYD0okrdPpAwglrkhhSDdE4DArQ==",
+      "path": "microsoft.azure.storage.common/11.1.5",
+      "hashPath": "microsoft.azure.storage.common.11.1.5.nupkg.sha512"
+    },
+    "Microsoft.Azure.Storage.File/11.1.5": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-idzU2Rkh0Lwcs+g78Kqb2dhkezax3OoY4JmN0VFf06Xwiymz13XPwTIYoBFz1GCLfqLXTN73cfTK++YQKuwLjg==",
+      "path": "microsoft.azure.storage.file/11.1.5",
+      "hashPath": "microsoft.azure.storage.file.11.1.5.nupkg.sha512"
     },
     "Microsoft.CodeAnalysis.Analyzers/1.1.0": {
       "type": "package",
@@ -9681,6 +9822,13 @@
       "sha512": "sha512-jw9oHHEIVW53mHY9PgrQa98Xo2IZ0ZjrpdOTmtvk+Rvg4tq7dydmxdNqUvJ5YwjDqhn75mBXWttWjiKhWP53LQ==",
       "path": "system.xml.xpath.xdocument/4.3.0",
       "hashPath": "system.xml.xpath.xdocument.4.3.0.nupkg.sha512"
+    },
+    "WindowsAzure.Storage/9.3.3": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-VUV8j6dzkU/7vDgk5k+ob5g7nnch2fNByr0p9aOxMGFGk+tAnTehrZ4qnClF04CVozP1GNN2zrnbsxCmr+iZBg==",
+      "path": "windowsazure.storage/9.3.3",
+      "hashPath": "windowsazure.storage.9.3.3.nupkg.sha512"
     },
     "TWG_HR_API/1.0.0.0": {
       "type": "reference",

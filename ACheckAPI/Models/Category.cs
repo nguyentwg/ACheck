@@ -11,6 +11,7 @@ namespace ACheckAPI.Models
         {
             AssetCategory = new HashSet<AssetCategory>();
             EavAttributeValue = new HashSet<EavAttributeValue>();
+            Image = new HashSet<Image>();
         }
 
         public string CategoryId { get; set; }
@@ -35,5 +36,6 @@ namespace ACheckAPI.Models
 
         public virtual ICollection<AssetCategory> AssetCategory { get; set; }
         public virtual ICollection<EavAttributeValue> EavAttributeValue { get; set; }
+        public virtual ICollection<Image> Image { get; set; }
     }
 }

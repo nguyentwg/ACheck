@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -11,6 +12,7 @@ namespace ACheckAPI.Models
             AssetCategory = new HashSet<AssetCategory>();
             Assign = new HashSet<Assign>();
             DeptAsset = new HashSet<DeptAsset>();
+            Image = new HashSet<Image>();
         }
 
         public string AssetId { get; set; }
@@ -23,6 +25,7 @@ namespace ACheckAPI.Models
         public string UpdatedAt { get; set; }
         public string Updater { get; set; }
         public bool? Active { get; set; }
+
         [NotMapped]
         public string CategoryID { get; set; }
         [NotMapped]
@@ -36,5 +39,6 @@ namespace ACheckAPI.Models
         public virtual ICollection<AssetCategory> AssetCategory { get; set; }
         public virtual ICollection<Assign> Assign { get; set; }
         public virtual ICollection<DeptAsset> DeptAsset { get; set; }
+        public virtual ICollection<Image> Image { get; set; }
     }
 }

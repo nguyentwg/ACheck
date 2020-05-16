@@ -9,7 +9,7 @@ namespace ACheckAPI.Common
     public class AppSetting
     {
         public static string Key;
-        
+        public static AzureConfig azureConfig;
     }
 
 }

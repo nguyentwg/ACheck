@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using Microsoft.Azure.Storage;
+using Microsoft.Azure.Storage.Blob;
+using Microsoft.Azure.Storage.File;
 
 namespace ACheckAPI.Models
 {
@@ -61,10 +64,13 @@ namespace ACheckAPI.Models
             return json;
         }
         
+        
     }
     public class Variance
     {
         public string Prop { get; set; }
         public object Value { get; set; }
     }
+    
+    
 }

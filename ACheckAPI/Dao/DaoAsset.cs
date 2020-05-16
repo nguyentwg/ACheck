@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ACheckAPI.Common;
 using ACheckAPI.ModelViews;
+using Microsoft.AspNetCore.Http;
 
 namespace ACheckAPI.Dao
 {
@@ -38,7 +39,7 @@ namespace ACheckAPI.Dao
         public Asset GetAssetByID(string AssetID)
         {
             var result = context.Asset.AsNoTracking().Where(p => p.Active == true && p.AssetId.Equals(AssetID))
-                                                    .Include(p => p.Assign).AsEnumerable().FirstOrDefault();
+                                                    .Include(p => p.Image).Include(p => p.Assign).AsEnumerable().FirstOrDefault();
             return result;
         }
 
@@ -65,8 +66,9 @@ namespace ACheckAPI.Dao
                      }).AsEnumerable().ToList();
             return result;
         }
+        
 
-        public async Task<int> Add(ViewAsset viewAsset)
+        public async Task<int> Add(ViewAsset viewAsset, IFormFileCollection formFileCollection)
         {
             DaoAssign daoAssign = new DaoAssign(context);
             DaoDeptAsset daoDeptAsset = new DaoDeptAsset(context);
@@ -79,6 +81,10 @@ namespace ACheckAPI.Dao
             List<EavAttributeValue> lsAttributeValue = new List<EavAttributeValue>();
             lsAttributeValue = viewAsset.EavAttributeValue;
             asset.AssetId = this.GenerateAssetID();
+            if (string.IsNullOrEmpty(asset.AssetCode))
+            {
+                asset.AssetCode = asset.AssetId;
+            }
             var checkCode = this.CheckUniqueAssetCode(asset.AssetCode, asset.AssetId);
             if (checkCode)
             {
@@ -86,7 +92,7 @@ namespace ACheckAPI.Dao
                 asset.UpdatedAt = DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss");
                 context.Asset.Add(asset);
 
-                if(asset.CategoryID != null)
+                if (asset.CategoryID != null)
                 {
                     EavAttributeValue cate = new EavAttributeValue();
                     cate.Guid = Guid.NewGuid().ToString().ToUpper();
@@ -95,7 +101,7 @@ namespace ACheckAPI.Dao
                     cate.AttributeGroup = EnumEAV.EAV_Type.AssetCategory.ToString();
                     context.EavAttributeValue.Add(cate);
                 }
-                if(asset.LocationID != null)
+                if (asset.LocationID != null)
                 {
                     EavAttributeValue cate = new EavAttributeValue();
                     cate.Guid = Guid.NewGuid().ToString().ToUpper();
@@ -109,7 +115,7 @@ namespace ACheckAPI.Dao
                     assign.AssetId = asset.AssetId;
                     daoAssign.AssignAsset(assign);
                 }
-                if(deptAsset != null)
+                if (deptAsset != null)
                 {
                     deptAsset.AssetId = asset.AssetId;
                     daoDeptAsset.Add(deptAsset);
@@ -121,11 +127,16 @@ namespace ACheckAPI.Dao
                     item.AttributeGroup = EnumEAV.EAV_Type.AssetAttribute.ToString();
                     context.EavAttributeValue.Add(item);
                 }
+
+                List<Image> lsAssetImage = new List<Image>();
+                lsAssetImage = new Function().DangTaiHinhAnh(formFileCollection, asset.AssetId);
+                context.Image.AddRange(lsAssetImage);
             }
+            
             return await context.SaveChangesAsync();
         }
 
-        public async Task<int> Update(ViewAsset viewAsset)
+        public async Task<int> Update(ViewAsset viewAsset, IFormFileCollection formFileCollection)
         {
             DaoAssign daoAssign = new DaoAssign(context);
             DaoDeptAsset daoDeptAsset = new DaoDeptAsset(context);
@@ -153,7 +164,6 @@ namespace ACheckAPI.Dao
                 {
                     deptAsset.AssetId = asset.AssetId;
                     daoDeptAsset.Add(deptAsset);
-
                 }
                 foreach (EavAttributeValue item in lsAttributeValue)
                 {
@@ -168,16 +178,18 @@ namespace ACheckAPI.Dao
                         item.AttributeGroup = !string.IsNullOrEmpty(item.Value) ? EnumEAV.EAV_Type.AssetAttribute.ToString() : EnumEAV.EAV_Type.AssetCategory.ToString();
                         context.EavAttributeValue.Add(item);
                     }
-                    
                 }
+                List<Image> lsAssetImage = new List<Image>();
+                lsAssetImage = new Function().DangTaiHinhAnh(formFileCollection, asset.AssetId);
+                context.Image.AddRange(lsAssetImage);
             }
             return await context.SaveChangesAsync();
         }
-
+        
         public ViewAsset GetAssetByAssetID(string AssetID)
         {
             ViewAsset res = new ViewAsset();
-            var a = (from asset in context.Asset
+            var assetObj = (from asset in context.Asset
                      join asset_cate in context.EavAttributeValue on asset.AssetId equals asset_cate.CategoryId
                      where (asset_cate.AttributeGroup??" ").Equals(EnumEAV.EAV_Type.AssetCategory.ToString())
                      join Cate in context.Category on asset_cate.EavId equals Cate.CategoryId
@@ -195,9 +207,10 @@ namespace ACheckAPI.Dao
                      }).AsEnumerable().FirstOrDefault();
             
             var AssetAttribute = context.EavAttributeValue.AsNoTracking().Where(p => p.Active == true && p.CategoryId.Equals(AssetID) && p.AttributeGroup.Equals(EnumEAV.EAV_Type.AssetAttribute.ToString())).Include(p => p.Eav).AsEnumerable().ToList();
-            res.asset = a;
-            res.assign = context.Assign.Where(p => p.AssetId.Equals(a.AssetId) && p.Active == true).AsEnumerable().FirstOrDefault();
-            res.DeptAsset = context.DeptAsset.Where(p => p.AssetId.Equals(a.AssetId) && p.Active == true).AsEnumerable().FirstOrDefault();
+            res.asset = assetObj;
+            res.lsImage = context.Image.Where(p => p.ReferenceId.Equals(AssetID)).AsNoTracking().AsEnumerable().ToList();
+            res.assign = context.Assign.Where(p => p.AssetId.Equals(assetObj.AssetId) && p.Active == true).AsEnumerable().FirstOrDefault();
+            res.DeptAsset = context.DeptAsset.Where(p => p.AssetId.Equals(assetObj.AssetId) && p.Active == true).AsEnumerable().FirstOrDefault();
             res.EavAttributeValue = AssetAttribute;
             return res;
         }

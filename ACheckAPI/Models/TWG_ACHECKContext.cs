@@ -35,6 +35,7 @@ namespace ACheckAPI.Models
 
         public virtual DbSet<Asset> Asset { get; set; }
         public virtual DbSet<AssetCategory> AssetCategory { get; set; }
+        public virtual DbSet<Image> Image { get; set; }
         public virtual DbSet<Assign> Assign { get; set; }
         public virtual DbSet<Building> Building { get; set; }
         public virtual DbSet<Category> Category { get; set; }
@@ -191,6 +192,42 @@ namespace ACheckAPI.Models
                     .WithMany(p => p.AssetCategory)
                     .HasForeignKey(d => d.CategoryId)
                     .HasConstraintName("fk_Category_AssetCategory_1");
+            });
+
+            modelBuilder.Entity<Image>(entity =>
+            {
+                entity.HasKey(e => e.Guid)
+                    .HasName("PK__Image__E452D3DB41C896C3");
+
+                entity.Property(e => e.Guid)
+                    .HasMaxLength(50)
+                    .ValueGeneratedNever();
+
+                entity.Property(e => e.Active).HasDefaultValueSql("((1))");
+
+                entity.Property(e => e.ImageName)
+                    .HasColumnName("Image_Name")
+                    .HasColumnType("ntext");
+
+                entity.Property(e => e.OriginalName)
+                    .HasColumnName("Original_Name")
+                    .HasColumnType("ntext");
+
+                entity.Property(e => e.Path).HasColumnType("ntext");
+
+                entity.Property(e => e.ReferenceId)
+                    .HasColumnName("Reference_ID")
+                    .HasMaxLength(50);
+
+                entity.HasOne(d => d.Reference)
+                    .WithMany(p => p.Image)
+                    .HasForeignKey(d => d.ReferenceId)
+                    .HasConstraintName("fk_Asset_Image_1");
+
+                entity.HasOne(d => d.ReferenceNavigation)
+                    .WithMany(p => p.Image)
+                    .HasForeignKey(d => d.ReferenceId)
+                    .HasConstraintName("fk_Asset_Image_2");
             });
 
             modelBuilder.Entity<Assign>(entity =>

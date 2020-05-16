@@ -115,9 +115,10 @@ namespace ACheckAPI.Controllers
 
         [HttpPost]
         [Route("Add")]
-
-        public async Task<ReturnObject> Add(ModelViews.ViewAsset entity)
+        public async Task<ReturnObject> Add()
         {
+            IFormFileCollection formFiles = Request.Form.Files;
+            ModelViews.ViewAsset entity = JsonConvert.DeserializeObject<ModelViews.ViewAsset>(Request.Form["entity"].ToString());
             ReturnObject obj = new ReturnObject();
             obj.status = -1;
             using (var transaction = tWG_ACHECKContext.Database.BeginTransaction())
@@ -125,7 +126,7 @@ namespace ACheckAPI.Controllers
                 try
                 {
                     DaoAsset daoAsset = new DaoAsset(tWG_ACHECKContext);
-                    int result = await daoAsset.Add(entity);
+                    int result = await daoAsset.Add(entity, formFiles);
                     if (result > 0)
                     {
                         obj.status = 1;
@@ -146,8 +147,10 @@ namespace ACheckAPI.Controllers
         [HttpPost]
         [Route("Update")]
 
-        public async Task<ReturnObject> Update(ModelViews.ViewAsset entity)
+        public async Task<ReturnObject> Update()
         {
+            IFormFileCollection formFiles = Request.Form.Files;
+            ModelViews.ViewAsset entity = JsonConvert.DeserializeObject<ModelViews.ViewAsset>(Request.Form["entity"].ToString());
             ReturnObject obj = new ReturnObject();
             obj.status = -1;
             using (var transaction = tWG_ACHECKContext.Database.BeginTransaction())
@@ -155,7 +158,7 @@ namespace ACheckAPI.Controllers
                 try
                 {
                     DaoAsset daoAsset = new DaoAsset(tWG_ACHECKContext);
-                    int result = await daoAsset.Update(entity);
+                    int result = await daoAsset.Update(entity, formFiles);
                     if (result > 0)
                     {
                         obj.status = 1;
@@ -173,6 +176,14 @@ namespace ACheckAPI.Controllers
             return obj;
         }
 
+
+        public class Upload
+        {
+            public IFormFile File { get; set; }
+            public string GroupImport { get; set; }
+        }
+
+        
 
         [HttpPost]
         [Route("UpdateAsset")]
