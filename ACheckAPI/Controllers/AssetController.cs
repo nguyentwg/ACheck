@@ -176,15 +176,7 @@ namespace ACheckAPI.Controllers
             return obj;
         }
 
-
-        public class Upload
-        {
-            public IFormFile File { get; set; }
-            public string GroupImport { get; set; }
-        }
-
         
-
         [HttpPost]
         [Route("UpdateAsset")]
 
