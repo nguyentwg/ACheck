@@ -25,6 +25,11 @@ namespace ACheckAPI.Models
         public string UpdatedAt { get; set; }
         public string Updater { get; set; }
         public bool? Active { get; set; }
+        public string Unit { get; set; }
+        public decimal? Price { get; set; }
+        public string Model { get; set; }
+        public string Origin { get; set; }
+        public int? Quantity { get; set; }
 
         [NotMapped]
         public string CategoryID { get; set; }

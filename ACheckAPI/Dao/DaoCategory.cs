@@ -49,7 +49,7 @@ namespace ACheckAPI.Dao
         {
             DaoAsset daoAsset = new DaoAsset(context);
             ViewCategory result = new ViewCategory();
-            result.lsSubCategory = context.Category.AsNoTracking().Where(p => p.Active == true && p.CategoryType.Equals(GroupId))
+            result.lsSubCategory = context.Category.AsNoTracking().Where(p => p.Active == true && p.ParentId.Equals("0") && p.CategoryType.Equals(GroupId))
                                                    .Include(p => p.EavAttributeValue).ThenInclude(x => x.Eav).AsEnumerable().ToList();
             result.lsSubCategory.ForEach(e =>
             {
