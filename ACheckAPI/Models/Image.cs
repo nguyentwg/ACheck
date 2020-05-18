@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -18,5 +19,10 @@ namespace ACheckAPI.Models
         public virtual Asset Reference { get; set; }
         [JsonIgnore]
         public virtual Category ReferenceNavigation { get; set; }
+
+        internal static IDisposable FromStream(MemoryStream memoryStream)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

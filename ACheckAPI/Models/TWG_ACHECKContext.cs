@@ -160,7 +160,7 @@ namespace ACheckAPI.Models
                 entity.Property(e => e.Model).HasMaxLength(50);
 
                 entity.Property(e => e.Origin).HasMaxLength(50);
-                
+
                 entity.Property(e => e.Price).HasColumnType("decimal(16, 3)");
 
                 entity.Property(e => e.Creater).HasMaxLength(50);

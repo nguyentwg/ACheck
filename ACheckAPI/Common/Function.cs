@@ -7,12 +7,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using LazZiya.ImageResize;
+using System.Drawing.Imaging;
 
 namespace ACheckAPI.Common
 {
     public class Function
     {
-        private CloudBlockBlob GenerateCloudBlockBlobNhanVien(string duongdan)
+        private CloudBlockBlob GenerateCloudBlockBlobImage(string duongdan)
         {
             CloudStorageAccount cloudStorageAccount = CloudStorageAccount.Parse(AppSetting.azureConfig.ConnectionString);
             CloudBlobClient cloudBlobClient = cloudStorageAccount.CreateCloudBlobClient();
@@ -28,6 +30,14 @@ namespace ACheckAPI.Common
             return cloudBlockBlob;
         }
 
+        public static Stream ToStream(System.Drawing.Image image, ImageFormat format)
+        {
+            var stream = new System.IO.MemoryStream();
+            image.Save(stream, format);
+            stream.Position = 0;
+            return stream;
+        }
+
         public List<Image> DangTaiHinhAnh(IFormFileCollection AssetImage, string AssetID)
         {
             List<Image> lsAssetImage = new List<Image>();
@@ -38,9 +48,16 @@ namespace ACheckAPI.Common
                     Image obj = new Image();
                     string image_name = AssetID + DateTime.Now.ToString("yyMMddhhmmss");
                     string file_name = AssetID + "/" + image_name + Path.GetExtension(file.FileName);
-                    CloudBlockBlob cloudBlockBlob = GenerateCloudBlockBlobNhanVien(file_name);
+                    CloudBlockBlob cloudBlockBlob = GenerateCloudBlockBlobImage(file_name);
                     cloudBlockBlob.UploadFromStream(file.OpenReadStream());
                     string path = cloudBlockBlob.Uri.AbsoluteUri + "?v=" + DateTime.Now.ToString("yyMMddhhmmss");
+
+                    //Resize
+                    var img = ImageResize.Scale(System.Drawing.Image.FromStream(file.OpenReadStream()), 200, 200);
+                    string file_name200 = AssetID + "/" + image_name + "_200" + Path.GetExtension(file.FileName);
+                    cloudBlockBlob = GenerateCloudBlockBlobImage(file_name200);
+                    cloudBlockBlob.UploadFromStream(ToStream(img, ImageFormat.Png));
+                    
                     obj.Guid = Guid.NewGuid().ToString();
                     obj.OriginalName = file.FileName;
                     obj.ImageName = image_name + Path.GetExtension(file.FileName);
