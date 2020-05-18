@@ -10,6 +10,7 @@ namespace ACheckAPI.Common
     {
         public static string Key;
         public static AzureConfig azureConfig;
+        public static string LAH_Hr_Api;
     }
 
 }

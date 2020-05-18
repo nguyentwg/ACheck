@@ -151,19 +151,20 @@ namespace ACheckAPI.Dao
                     deptAsset.AssetId = asset.AssetId;
                     daoDeptAsset.Add(deptAsset);
                 }
-                foreach (EavAttributeValue item in lsAttributeValue)
+                if(lsAttributeValue != null)
                 {
-                    item.Guid = Guid.NewGuid().ToString().ToUpper();
-                    item.CategoryId = asset.AssetId;
-                    item.AttributeGroup = EnumEAV.EAV_Type.AssetAttribute.ToString();
-                    context.EavAttributeValue.Add(item);
+                    foreach (EavAttributeValue item in lsAttributeValue)
+                    {
+                        item.Guid = Guid.NewGuid().ToString().ToUpper();
+                        item.CategoryId = asset.AssetId;
+                        item.AttributeGroup = EnumEAV.EAV_Type.AssetAttribute.ToString();
+                        context.EavAttributeValue.Add(item);
+                    }
                 }
-
                 List<Image> lsAssetImage = new List<Image>();
                 lsAssetImage = new Function().DangTaiHinhAnh(formFileCollection, asset.AssetId);
                 context.Image.AddRange(lsAssetImage);
             }
-
             return await context.SaveChangesAsync();
         }
 
