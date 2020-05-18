@@ -14,6 +14,7 @@ namespace ACheckAPI.Models
         public string OriginalName { get; set; }
         public string ImageName { get; set; }
         public string Path { get; set; }
+        public string PathThumbNail { get; set; }
         public bool? Active { get; set; }
         [JsonIgnore]
         public virtual Asset Reference { get; set; }

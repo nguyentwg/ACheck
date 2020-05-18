@@ -227,6 +227,8 @@ namespace ACheckAPI.Models
 
                 entity.Property(e => e.Path).HasColumnType("ntext");
 
+                entity.Property(e => e.PathThumbNail).HasColumnType("ntext");
+
                 entity.Property(e => e.ReferenceId)
                     .HasColumnName("Reference_ID")
                     .HasMaxLength(50);

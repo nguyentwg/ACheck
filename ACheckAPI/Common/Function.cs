@@ -57,11 +57,13 @@ namespace ACheckAPI.Common
                     string file_name200 = AssetID + "/" + image_name + "_200" + Path.GetExtension(file.FileName);
                     cloudBlockBlob = GenerateCloudBlockBlobImage(file_name200);
                     cloudBlockBlob.UploadFromStream(ToStream(img, ImageFormat.Png));
-                    
+                    string pathThumbNail = cloudBlockBlob.Uri.AbsoluteUri + "?v=" + DateTime.Now.ToString("yyMMddhhmmss");
+
                     obj.Guid = Guid.NewGuid().ToString();
                     obj.OriginalName = file.FileName;
                     obj.ImageName = image_name + Path.GetExtension(file.FileName);
                     obj.Path = path;
+                    obj.PathThumbNail = pathThumbNail;
                     obj.ReferenceId = AssetID;
                     lsAssetImage.Add(obj);
                 }
