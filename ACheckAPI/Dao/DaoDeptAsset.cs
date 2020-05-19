@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ACheckAPI.Common;
 using ACheckAPI.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace ACheckAPI.Dao
 {
@@ -22,9 +24,33 @@ namespace ACheckAPI.Dao
             else
             {
                 var entityDB = context.DeptAsset.Where(p => p.Guid.Equals(entity.Guid)).FirstOrDefault();
-                entity.CopyPropertiesTo<DeptAsset>(entityDB);
-                context.DeptAsset.Update(entityDB);
+                //Thay đổi phòng ban
+                if (entityDB.DeptId != entity.DeptId)
+                {
+                    //Cập nhật ngày hết hạn thiết bị tại phòng ban
+                    entityDB.ToDate = DateTime.Now.ToString("dd-MM-yyyy");
+                    context.DeptAsset.Update(entityDB);
+
+                    DeptAsset deptAsset = new DeptAsset();
+                    deptAsset.Guid = Guid.NewGuid().ToString();
+                    deptAsset.FromDate = DateTime.Now.ToString("dd-MM-yyyy");
+                    deptAsset.CreatedAt = DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss");
+                    deptAsset.UpdatedAt = DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss");
+                    deptAsset.Supporter = entity.Supporter;
+                    deptAsset.DeptId = entity.DeptId;
+                    deptAsset.AssetId = entity.AssetId;
+                    context.DeptAsset.Add(deptAsset);
+                }
+                else
+                {
+                    //entity.CopyPropertiesTo<DeptAsset>(entityDB);
+                    //entityDB.AssetId = entity.AssetId;
+                    entityDB.UpdatedAt = DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss");
+                    context.DeptAsset.Update(entityDB);
+                }
             }
         }
+
+
     }
 }

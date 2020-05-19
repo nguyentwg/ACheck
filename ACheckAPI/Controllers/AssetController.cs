@@ -41,6 +41,28 @@ namespace ACheckAPI.Controllers
             return obj;
         }
 
+
+        [HttpGet]
+        [Route("GetAssetByDepartmentID")]
+        public ReturnObject GetAssetByDepartmentID(string DepartmentID)
+        {
+            ReturnObject obj = new ReturnObject();
+            obj.status = -1;
+            try
+            {
+                DaoAsset daoAsset = new DaoAsset(tWG_ACHECKContext);
+                var result = daoAsset.GetAssetByDepartmentID(DepartmentID);
+                obj.status = 1;
+                obj.value = result;
+            }
+            catch (Exception ex)
+            {
+                obj.status = -1;
+                obj.message = ex.StackTrace;
+            }
+            return obj;
+        }
+
         [HttpGet]
         [Route("AssetFilter")]
         public ReturnObject AssetFilter(string AssetID, string AssetName)

@@ -246,6 +246,9 @@ namespace ACheckAPI.Models
 
             modelBuilder.Entity<Assign>(entity =>
             {
+                entity.HasKey(e => e.AssignId)
+                    .HasName("PK__Assign__E452D3DB41C896C3");
+
                 entity.Property(e => e.AssignId)
                     .HasColumnName("Assign_ID")
                     .HasMaxLength(50)
@@ -406,6 +409,8 @@ namespace ACheckAPI.Models
                     .HasMaxLength(20);
 
                 entity.Property(e => e.Creater).HasMaxLength(50);
+
+                entity.Property(e => e.Supporter).HasMaxLength(50);
 
                 entity.Property(e => e.Updater).HasMaxLength(50);
 

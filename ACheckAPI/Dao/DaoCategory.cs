@@ -18,7 +18,7 @@ namespace ACheckAPI.Dao
 
         public object GetCategories()
         {
-            return context.Category.AsNoTracking().Where(p => p.Active == true).Select(i => new { CategoryId = i.CategoryId, CategoryName =i.CategoryName, ParentId=  i.ParentId }).AsEnumerable().ToList();
+            return context.Category.AsNoTracking().Where(p => p.Active == true).Select(i => new { CategoryId = i.CategoryId, CategoryName =i.CategoryName, ParentId=  i.ParentId, CategoryType = i.CategoryType }).AsEnumerable().ToList();
         }
 
         public List<Category> Get()

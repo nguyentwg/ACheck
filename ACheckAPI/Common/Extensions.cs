@@ -36,9 +36,30 @@ namespace ACheckAPI.Models
 
             foreach (PropertyInfo prop in plist)
             {
+                //dest.GetType().GetProperty(prop.Name).SetValue(dest, prop.GetValue(source));
                 prop.SetValue(dest, prop.GetValue(source, null), null);
             }
         }
+
+        private static object CloneObject(object o)
+        {
+            Type t = o.GetType();
+            PropertyInfo[] properties = t.GetProperties();
+
+            Object p = t.InvokeMember("", System.Reflection.BindingFlags.CreateInstance,
+                null, o, null);
+
+            foreach (PropertyInfo pi in properties)
+            {
+                if (pi.CanWrite)
+                {
+                    pi.SetValue(p, pi.GetValue(o, null), null);
+                }
+            }
+
+            return p;
+        }
+
 
         public static string DetailedCompare<T>(this T oldObject, T newObj)
         {
@@ -54,6 +75,13 @@ namespace ACheckAPI.Models
                 {
                     oldValue.Add(property.Key, property.Value.ToString());
                     newValue.Add(property.Key, s[property.Key].ToString());
+                }
+                if(s[property.Key] == null || property.Value == null)
+                {
+                    string _new = s[property.Key] == null ? "null" : s[property.Key];
+                    string _old = property.Value == null ? "null" : property.Value;
+                    oldValue.Add(property.Key, _old);
+                    newValue.Add(property.Key, _new);
                 }
             }
             string json = JsonConvert.SerializeObject(new

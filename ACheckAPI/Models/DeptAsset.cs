@@ -9,6 +9,7 @@ namespace ACheckAPI.Models
         public string Guid { get; set; }
         public string DeptId { get; set; }
         public string AssetId { get; set; }
+        public string Supporter { get; set; }
         public string FromDate { get; set; }
         public string ToDate { get; set; }
         public bool? Active { get; set; }

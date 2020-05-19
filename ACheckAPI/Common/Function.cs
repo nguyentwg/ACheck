@@ -76,7 +76,5 @@ namespace ACheckAPI.Common
                 return lsAssetImage;
             }
         }
-
-
     }
 }

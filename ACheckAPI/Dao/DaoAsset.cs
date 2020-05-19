@@ -69,6 +69,33 @@ namespace ACheckAPI.Dao
             return result;
         }
 
+
+        public List<Asset> GetAssetByDepartmentID(string DepartmentID)
+        {
+            var result = (from asset in context.Asset.Include(p => p.Image).Include(p => p.Assign).Include(p => p.DeptAsset)
+                          join asset_cate in context.EavAttributeValue on asset.AssetId equals asset_cate.CategoryId
+                          where asset_cate.AttributeGroup != null && asset_cate.AttributeGroup.Equals(EnumEAV.EAV_Type.AssetCategory.ToString())
+                          join Cate in context.Category on asset_cate.EavId equals Cate.CategoryId
+                          join asset_location in context.EavAttributeValue on asset.AssetId equals asset_location.CategoryId
+                          where (asset_location.AttributeGroup ?? " ").Equals(EnumEAV.EAV_Type.AssetLocation.ToString())
+                          join Area in context.Category on asset_location.EavId equals Area.CategoryId
+                          into ps
+                          where asset.Active == true
+                          from p in ps.DefaultIfEmpty()
+                          select new { asset, CategoryId = Cate == null ? "" : Cate.CategoryId, CategoryName = Cate == null ? "" : Cate.CategoryName, LocationID = p == null ? "" : p.CategoryId, LocationName = p == null ? "" : p.CategoryName }).AsEnumerable().Select(x =>
+                          {
+                              x.asset.CategoryID = x.CategoryId;
+                              x.asset.CategoryName = x.CategoryName;
+                              x.asset.LocationID = x.LocationID;
+                              x.asset.LocationName = x.LocationName;
+                              x.asset.Image = x.asset.Image.Where(p => p.Active == true).ToList();
+                              x.asset.Assign = x.asset.Assign.Where(p => p.Active == true).ToList();
+                              x.asset.DeptAsset = x.asset.DeptAsset.Where(p => p.Active == true && p.DeptId.Equals(DepartmentID)).ToList();
+                              return x.asset;
+                          }).AsEnumerable().ToList();
+            return result;
+        }
+
         public Asset GetAssetByID(string AssetID)
         {
             var result = context.Asset.AsNoTracking().Where(p => p.Active == true && p.AssetId.Equals(AssetID))
@@ -153,17 +180,17 @@ namespace ACheckAPI.Dao
                     cate.AttributeGroup = EnumEAV.EAV_Type.AssetLocation.ToString();
                     context.EavAttributeValue.Add(cate);
                 }
-                if (assign != null)
+                if (assign != null && !string.IsNullOrEmpty(assign.ReceiverBy))
                 {
                     assign.AssetId = asset.AssetId;
                     daoAssign.AssignAsset(assign);
                 }
-                if (deptAsset != null)
+                if (deptAsset != null && !string.IsNullOrEmpty(deptAsset.DeptId))
                 {
                     deptAsset.AssetId = asset.AssetId;
                     daoDeptAsset.Add(deptAsset);
                 }
-                if(lsAttributeValue != null)
+                if (lsAttributeValue != null)
                 {
                     foreach (EavAttributeValue item in lsAttributeValue)
                     {
@@ -199,16 +226,17 @@ namespace ACheckAPI.Dao
                 asset.CopyPropertiesTo<Asset>(assetDB);
                 assetDB.UpdatedAt = DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss");
                 context.Asset.Update(assetDB);
-                if (assign != null)
-                {
-                    assign.AssetId = asset.AssetId;
-                    daoAssign.AssignAsset(assign);
-                }
-                if (deptAsset != null)
+                if (deptAsset != null && !string.IsNullOrEmpty(deptAsset.DeptId))
                 {
                     deptAsset.AssetId = asset.AssetId;
                     daoDeptAsset.Add(deptAsset);
                 }
+                if (assign != null && !string.IsNullOrEmpty(assign.ReceiverBy))
+                {
+                    assign.AssetId = asset.AssetId;
+                    daoAssign.AssignAsset(assign);
+                }
+                
                 foreach (EavAttributeValue item in lsAttributeValue)
                 {
                     if (!string.IsNullOrEmpty(item.Guid))
