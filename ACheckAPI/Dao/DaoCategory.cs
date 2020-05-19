@@ -16,9 +16,9 @@ namespace ACheckAPI.Dao
     {
         public DaoCategory(TWG_ACHECKContext _context) : base(_context) { }
 
-        public List<Category> GetCategories()
+        public object GetCategories()
         {
-            return context.Category.AsNoTracking().Where(p => p.Active == true).AsEnumerable().ToList();
+            return context.Category.AsNoTracking().Where(p => p.Active == true).Select(i => new { CategoryId = i.CategoryId, CategoryName =i.CategoryName, ParentId=  i.ParentId }).AsEnumerable().ToList();
         }
 
         public List<Category> Get()
