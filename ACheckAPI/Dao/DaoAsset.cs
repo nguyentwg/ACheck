@@ -16,7 +16,10 @@ namespace ACheckAPI.Dao
         public DaoAsset(TWG_ACHECKContext _context) : base(_context) { }
         public List<Asset> GetAll()
         {
-            var result = (from asset in context.Asset.Include(p => p.Image).Include(p => p.Assign).Include(p => p.DeptAsset)
+            var result = (from asset in context.Asset
+                          .Include(p => p.Image)
+                          .Include(p => p.Assign)
+                          .Include(p => p.DeptAsset)
                           join asset_cate in context.EavAttributeValue on asset.AssetId equals asset_cate.CategoryId
                           where asset_cate.AttributeGroup != null && asset_cate.AttributeGroup.Equals(EnumEAV.EAV_Type.AssetCategory.ToString())
                           join Cate in context.Category on asset_cate.EavId equals Cate.CategoryId
@@ -32,6 +35,9 @@ namespace ACheckAPI.Dao
                               x.asset.CategoryName = x.CategoryName;
                               x.asset.LocationID = x.LocationID;
                               x.asset.LocationName = x.LocationName;
+                              x.asset.Image = x.asset.Image.Where(p => p.Active == true).ToList();
+                              x.asset.Assign = x.asset.Assign.Where(p => p.Active == true).ToList();
+                              x.asset.DeptAsset = x.asset.DeptAsset.Where(p => p.Active == true).ToList();
                               return x.asset;
                           }).AsEnumerable().ToList();
             return result;
@@ -55,6 +61,9 @@ namespace ACheckAPI.Dao
                                  x.asset.CategoryName = x.CategoryName;
                                  x.asset.LocationID = x.LocationID;
                                  x.asset.LocationName = x.LocationName;
+                                 x.asset.Image = x.asset.Image.Where(p => p.Active == true).ToList();
+                                 x.asset.Assign = x.asset.Assign.Where(p => p.Active == true).ToList();
+                                 x.asset.DeptAsset = x.asset.DeptAsset.Where(p => p.Active == true).ToList();
                                  return x.asset;
                              }).AsEnumerable().ToList();
             return result;
@@ -93,6 +102,9 @@ namespace ACheckAPI.Dao
                               x.asset.CategoryName = x.CategoryName;
                               x.asset.LocationID = x.LocationID;
                               x.asset.LocationName = x.LocationName;
+                              x.asset.Image = x.asset.Image.Where(p => p.Active == true).ToList();
+                              x.asset.Assign = x.asset.Assign.Where(p => p.Active == true).ToList();
+                              x.asset.DeptAsset = x.asset.DeptAsset.Where(p => p.Active == true).ToList();
                               return x.asset;
                           }).AsEnumerable().ToList();
             return result;
@@ -237,6 +249,9 @@ namespace ACheckAPI.Dao
                                 x.asset.CategoryName = x.CategoryName;
                                 x.asset.LocationID = x.LocationID;
                                 x.asset.LocationName = x.LocationName;
+                                x.asset.Image = x.asset.Image.Where(p => p.Active == true).ToList();
+                                x.asset.Assign = x.asset.Assign.Where(p => p.Active == true).ToList();
+                                x.asset.DeptAsset = x.asset.DeptAsset.Where(p => p.Active == true).ToList();
                                 return x.asset;
                             }).AsEnumerable().FirstOrDefault();
             return res;
