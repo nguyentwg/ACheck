@@ -15,6 +15,7 @@ namespace ACheckAPI.Dao
 
         public void AssignAsset(Assign entity)
         {
+            string now = string.Join('-', DateTime.Now.ToString("dd-MM-yyyy").Split('-').ToArray().Reverse());
             if (string.IsNullOrEmpty(entity.AssignId))
             {
                 entity.AssignId = Guid.NewGuid().ToString();
@@ -24,7 +25,8 @@ namespace ACheckAPI.Dao
             }
             else
             {
-                var entityDB = context.Assign.Where(p => p.AssignId.Equals(entity.AssignId)).FirstOrDefault();
+                var lsentityDB = context.Assign.Where(p => p.AssignId.Equals(entity.AssignId)).ToList();
+                var entityDB = lsentityDB.Where(p => (p.ToDate == null || string.Compare(string.Join('-', p.ToDate.Split('-').ToArray().Reverse()), now) >= 0)).FirstOrDefault();
                 //Thay đổi phòng ban
                 if (entityDB.ReceiverBy != entity.ReceiverBy)
                 {

@@ -223,43 +223,47 @@ namespace ACheckAPI.Dao
             if (checkCode)
             {
                 var assetDB = context.Asset.Where(p => p.AssetId.Equals(asset.AssetId)).FirstOrDefault();
-                asset.CopyPropertiesTo<Asset>(assetDB);
-                assetDB.UpdatedAt = DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss");
-                context.Asset.Update(assetDB);
-                if (deptAsset != null && !string.IsNullOrEmpty(deptAsset.DeptId))
+                if(assetDB != null)
                 {
-                    deptAsset.AssetId = asset.AssetId;
-                    daoDeptAsset.Add(deptAsset);
-                }
-                if (assign != null && !string.IsNullOrEmpty(assign.ReceiverBy))
-                {
-                    assign.AssetId = asset.AssetId;
-                    daoAssign.AssignAsset(assign);
-                }
-                
-                foreach (EavAttributeValue item in lsAttributeValue)
-                {
-                    if (!string.IsNullOrEmpty(item.Guid))
+                    asset.CopyPropertiesTo<Asset>(assetDB);
+                    assetDB.UpdatedAt = DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss");
+                    context.Asset.Update(assetDB);
+                    if (deptAsset != null && !string.IsNullOrEmpty(deptAsset.DeptId))
                     {
-                        context.EavAttributeValue.Update(item);
+                        deptAsset.AssetId = asset.AssetId;
+                        daoDeptAsset.Add(deptAsset);
                     }
-                    else
+                    if (assign != null && !string.IsNullOrEmpty(assign.ReceiverBy))
                     {
-                        item.Guid = Guid.NewGuid().ToString().ToUpper();
-                        item.CategoryId = asset.AssetId;
-                        item.AttributeGroup = !string.IsNullOrEmpty(item.Value) ? EnumEAV.EAV_Type.AssetAttribute.ToString() : EnumEAV.EAV_Type.AssetCategory.ToString();
-                        context.EavAttributeValue.Add(item);
+                        assign.AssetId = asset.AssetId;
+                        daoAssign.AssignAsset(assign);
                     }
-                }
-                List<Image> lsAssetImage = new List<Image>();
-                lsAssetImage = new Function().DangTaiHinhAnh(formFileCollection, asset.AssetId);
-                context.Image.AddRange(lsAssetImage);
+
+                    foreach (EavAttributeValue item in lsAttributeValue)
+                    {
+                        if (!string.IsNullOrEmpty(item.Guid))
+                        {
+                            context.EavAttributeValue.Update(item);
+                        }
+                        else
+                        {
+                            item.Guid = Guid.NewGuid().ToString().ToUpper();
+                            item.CategoryId = asset.AssetId;
+                            item.AttributeGroup = !string.IsNullOrEmpty(item.Value) ? EnumEAV.EAV_Type.AssetAttribute.ToString() : EnumEAV.EAV_Type.AssetCategory.ToString();
+                            context.EavAttributeValue.Add(item);
+                        }
+                    }
+                    List<Image> lsAssetImage = new List<Image>();
+                    lsAssetImage = new Function().DangTaiHinhAnh(formFileCollection, asset.AssetId);
+                    context.Image.AddRange(lsAssetImage);
+                } 
             }
             return await context.SaveChangesAsync();
         }
 
         public Asset GetAssetByAssetID(string AssetID)
         {
+            string now = string.Join('-', DateTime.Now.ToString("dd-MM-yyyy").Split('-').ToArray().Reverse());
             Asset res = new Asset();
             res = (from asset in context.Asset.Include(p => p.Image).Include(p=>p.Assign).Include(p=>p.DeptAsset)
                             join asset_cate in context.EavAttributeValue on asset.AssetId equals asset_cate.CategoryId
@@ -278,7 +282,7 @@ namespace ACheckAPI.Dao
                                 x.asset.LocationID = x.LocationID;
                                 x.asset.LocationName = x.LocationName;
                                 x.asset.Image = x.asset.Image.Where(p => p.Active == true).ToList();
-                                x.asset.Assign = x.asset.Assign.Where(p => p.Active == true).ToList();
+                                x.asset.Assign = x.asset.Assign.Where(p => p.Active == true && (p.ToDate == null || string.Compare(string.Join('-', p.ToDate.Split('-').ToArray().Reverse()), now) >= 0 )).ToList();
                                 x.asset.DeptAsset = x.asset.DeptAsset.Where(p => p.Active == true).ToList();
                                 return x.asset;
                             }).AsEnumerable().FirstOrDefault();
@@ -375,6 +379,44 @@ namespace ACheckAPI.Dao
             {
                 return true;
             }
+        }
+
+        public int ImportData(List<Asset> lsAsset)
+        {
+            List<EavAttributeValue> lsLocation = new List<EavAttributeValue>();
+            List<EavAttributeValue> lsCategory = new List<EavAttributeValue>();
+            foreach (Asset item in lsAsset)
+            {
+                item.AssetId = this.GenerateAssetID();
+                item.CreatedAt = DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss");
+                item.UpdatedAt = DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss");
+                if (string.IsNullOrEmpty(item.AssetCode))
+                {
+                    item.AssetCode = item.AssetId;
+                }
+                if (item.CategoryID != null)
+                {
+                    EavAttributeValue cate = new EavAttributeValue();
+                    cate.Guid = Guid.NewGuid().ToString().ToUpper();
+                    cate.CategoryId = item.AssetId;
+                    cate.EavId = item.CategoryID;
+                    cate.AttributeGroup = EnumEAV.EAV_Type.AssetCategory.ToString();
+                    lsCategory.Add(cate);
+                }
+                if (item.LocationID != null)
+                {
+                    EavAttributeValue cate = new EavAttributeValue();
+                    cate.Guid = Guid.NewGuid().ToString().ToUpper();
+                    cate.CategoryId = item.AssetId;
+                    cate.EavId = item.LocationID;
+                    cate.AttributeGroup = EnumEAV.EAV_Type.AssetLocation.ToString();
+                    lsLocation.Add(cate);
+                }
+            }
+            context.Asset.AddRange(lsAsset);
+            context.EavAttributeValue.AddRange(lsLocation);
+            context.EavAttributeValue.AddRange(lsCategory);
+            return context.SaveChanges();
         }
     }
 }

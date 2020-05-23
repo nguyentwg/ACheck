@@ -84,7 +84,7 @@ namespace ACheckAPI.Models
             List<AuditTrail> lsAuditTrail = new List<AuditTrail>();
             foreach (var res in a)
             {
-                string json = JsonConvert.DeserializeObject(res.OldValue == "null" ? "{}" : res.OldValue).DetailedCompare(JsonConvert.DeserializeObject(res.NewValue == "null" ? "{}" : res.NewValue));
+                string json = JsonConvert.DeserializeObject(res.OldValue.ToString() == "null" ? "{}" : res.OldValue.ToString()).DetailedCompare(JsonConvert.DeserializeObject(res.NewValue.ToString() == "null" ? "{}" : res.NewValue.ToString()));
                 ViewAudit CompareObject = JsonConvert.DeserializeObject<ViewAudit>(json);
                 AuditTrail auditTrailObj = new AuditTrail();
                 auditTrailObj.AuditTrailId = Guid.NewGuid().ToString();

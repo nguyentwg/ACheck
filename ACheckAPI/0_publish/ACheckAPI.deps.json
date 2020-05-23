@@ -1,7 +1,7 @@
 {
   "runtimeTarget": {
     "name": ".NETCoreApp,Version=v2.2/win-x64",
-    "signature": "6b70a0308bd71d7404d29c496788442bd8b59cad"
+    "signature": "aa88c8924b156cfbc330813c16e3003869283ebf"
   },
   "compilationOptions": {
     "defines": [
@@ -31,8 +31,12 @@
           "Microsoft.Azure.Storage.File": "11.1.5",
           "Microsoft.NETCore.App": "2.2.8",
           "Microsoft.VisualStudio.Web.CodeGeneration.Design": "2.2.3",
+          "NPOI": "2.5.1",
           "WindowsAzure.Storage": "9.3.3",
           "shortid": "2.0.1",
+          "Aspose.Cells": "19.7.0.0",
+          "Aspose.Pdf": "19.9.0.0",
+          "Aspose.Words": "19.3.0.0",
           "TWG_HR_API": "1.0.0.0",
           "TWG_HR_AuthenticationService": "1.0.0.0"
         },
@@ -2175,12 +2179,31 @@
           "lib/netstandard1.3/Newtonsoft.Json.Bson.dll": {}
         }
       },
+      "NPOI/2.5.1": {
+        "dependencies": {
+          "Portable.BouncyCastle": "1.8.6",
+          "SharpZipLib": "1.2.0",
+          "System.Configuration.ConfigurationManager": "4.5.0",
+          "System.Drawing.Common": "4.5.1"
+        },
+        "compile": {
+          "lib/netstandard2.0/NPOI.OOXML.dll": {},
+          "lib/netstandard2.0/NPOI.OpenXml4Net.dll": {},
+          "lib/netstandard2.0/NPOI.OpenXmlFormats.dll": {},
+          "lib/netstandard2.0/NPOI.dll": {}
+        }
+      },
       "NuGet.Frameworks/4.7.0": {
         "dependencies": {
           "NETStandard.Library": "2.0.3"
         },
         "compile": {
           "lib/netstandard1.6/NuGet.Frameworks.dll": {}
+        }
+      },
+      "Portable.BouncyCastle/1.8.6": {
+        "compile": {
+          "lib/netstandard2.0/BouncyCastle.Crypto.dll": {}
         }
       },
       "Remotion.Linq/2.2.0": {
@@ -2271,6 +2294,11 @@
       },
       "runtime.win-x64.runtime.native.System.Data.SqlClient.sni/4.4.0": {},
       "runtime.win-x86.runtime.native.System.Data.SqlClient.sni/4.4.0": {},
+      "SharpZipLib/1.2.0": {
+        "compile": {
+          "lib/netstandard2.0/ICSharpCode.SharpZipLib.dll": {}
+        }
+      },
       "shortid/2.0.1": {
         "compile": {
           "lib/netstandard2.0/shortid.dll": {}
@@ -2417,6 +2445,15 @@
         },
         "compile": {
           "lib/netstandard1.0/System.Composition.TypedParts.dll": {}
+        }
+      },
+      "System.Configuration.ConfigurationManager/4.5.0": {
+        "dependencies": {
+          "System.Security.Cryptography.ProtectedData": "4.5.0",
+          "System.Security.Permissions": "4.5.0"
+        },
+        "compile": {
+          "ref/netstandard2.0/System.Configuration.ConfigurationManager.dll": {}
         }
       },
       "System.Console/4.3.0": {
@@ -2990,6 +3027,7 @@
           "System.Threading.Tasks": "4.3.0"
         }
       },
+      "System.Security.Cryptography.ProtectedData/4.5.0": {},
       "System.Security.Cryptography.X509Certificates/4.3.0": {
         "dependencies": {
           "Microsoft.NETCore.Platforms": "2.2.4",
@@ -3228,6 +3266,21 @@
           "lib/netstandard1.3/Microsoft.WindowsAzure.Storage.dll": {}
         }
       },
+      "Aspose.Cells/19.7.0.0": {
+        "compile": {
+          "Aspose.Cells.dll": {}
+        }
+      },
+      "Aspose.Pdf/19.9.0.0": {
+        "compile": {
+          "Aspose.Pdf.dll": {}
+        }
+      },
+      "Aspose.Words/19.3.0.0": {
+        "compile": {
+          "Aspose.Words.dll": {}
+        }
+      },
       "TWG_HR_API/1.0.0.0": {
         "compile": {
           "TWG_HR_API.dll": {}
@@ -3249,8 +3302,12 @@
           "Microsoft.Azure.Storage.File": "11.1.5",
           "Microsoft.NETCore.App": "2.2.8",
           "Microsoft.VisualStudio.Web.CodeGeneration.Design": "2.2.3",
+          "NPOI": "2.5.1",
           "WindowsAzure.Storage": "9.3.3",
           "shortid": "2.0.1",
+          "Aspose.Cells": "19.7.0.0",
+          "Aspose.Pdf": "19.9.0.0",
+          "Aspose.Words": "19.3.0.0",
           "TWG_HR_API": "1.0.0.0",
           "TWG_HR_AuthenticationService": "1.0.0.0"
         },
@@ -5785,6 +5842,32 @@
           }
         }
       },
+      "NPOI/2.5.1": {
+        "dependencies": {
+          "Portable.BouncyCastle": "1.8.6",
+          "SharpZipLib": "1.2.0",
+          "System.Configuration.ConfigurationManager": "4.5.0",
+          "System.Drawing.Common": "4.5.1"
+        },
+        "runtime": {
+          "lib/netstandard2.0/NPOI.OOXML.dll": {
+            "assemblyVersion": "2.5.1.0",
+            "fileVersion": "2.5.1.0"
+          },
+          "lib/netstandard2.0/NPOI.OpenXml4Net.dll": {
+            "assemblyVersion": "2.5.1.0",
+            "fileVersion": "2.5.1.0"
+          },
+          "lib/netstandard2.0/NPOI.OpenXmlFormats.dll": {
+            "assemblyVersion": "2.5.1.0",
+            "fileVersion": "2.5.1.0"
+          },
+          "lib/netstandard2.0/NPOI.dll": {
+            "assemblyVersion": "2.5.1.0",
+            "fileVersion": "2.5.1.0"
+          }
+        }
+      },
       "NuGet.Frameworks/4.7.0": {
         "dependencies": {
           "NETStandard.Library": "2.0.3"
@@ -5793,6 +5876,14 @@
           "lib/netstandard1.6/NuGet.Frameworks.dll": {
             "assemblyVersion": "4.7.0.5",
             "fileVersion": "4.7.0.5148"
+          }
+        }
+      },
+      "Portable.BouncyCastle/1.8.6": {
+        "runtime": {
+          "lib/netstandard2.0/BouncyCastle.Crypto.dll": {
+            "assemblyVersion": "1.8.6.0",
+            "fileVersion": "1.8.6.1"
           }
         }
       },
@@ -6700,6 +6791,14 @@
         }
       },
       "runtime.win-x86.runtime.native.System.Data.SqlClient.sni/4.4.0": {},
+      "SharpZipLib/1.2.0": {
+        "runtime": {
+          "lib/netstandard2.0/ICSharpCode.SharpZipLib.dll": {
+            "assemblyVersion": "1.2.0.246",
+            "fileVersion": "1.2.0.246"
+          }
+        }
+      },
       "shortid/2.0.1": {
         "runtime": {
           "lib/netstandard2.0/shortid.dll": {
@@ -6863,6 +6962,18 @@
           "lib/netstandard1.0/System.Composition.TypedParts.dll": {
             "assemblyVersion": "1.0.31.0",
             "fileVersion": "4.6.24705.1"
+          }
+        }
+      },
+      "System.Configuration.ConfigurationManager/4.5.0": {
+        "dependencies": {
+          "System.Security.Cryptography.ProtectedData": "4.5.0",
+          "System.Security.Permissions": "4.5.0"
+        },
+        "runtime": {
+          "lib/netstandard2.0/System.Configuration.ConfigurationManager.dll": {
+            "assemblyVersion": "4.0.1.0",
+            "fileVersion": "4.6.26515.6"
           }
         }
       },
@@ -7453,6 +7564,14 @@
           "System.Threading.Tasks": "4.3.0"
         }
       },
+      "System.Security.Cryptography.ProtectedData/4.5.0": {
+        "runtime": {
+          "runtimes/win/lib/netstandard2.0/System.Security.Cryptography.ProtectedData.dll": {
+            "assemblyVersion": "4.0.3.0",
+            "fileVersion": "4.6.26515.6"
+          }
+        }
+      },
       "System.Security.Cryptography.X509Certificates/4.3.0": {
         "dependencies": {
           "Microsoft.NETCore.Platforms": "2.2.4",
@@ -7709,6 +7828,30 @@
           }
         }
       },
+      "Aspose.Cells/19.7.0.0": {
+        "runtime": {
+          "Aspose.Cells.dll": {
+            "assemblyVersion": "19.7.0.0",
+            "fileVersion": "19.7.0.0"
+          }
+        }
+      },
+      "Aspose.Pdf/19.9.0.0": {
+        "runtime": {
+          "Aspose.Pdf.dll": {
+            "assemblyVersion": "19.9.0.0",
+            "fileVersion": "19.9.0.0"
+          }
+        }
+      },
+      "Aspose.Words/19.3.0.0": {
+        "runtime": {
+          "Aspose.Words.dll": {
+            "assemblyVersion": "19.3.0.0",
+            "fileVersion": "19.3.0.0"
+          }
+        }
+      },
       "TWG_HR_API/1.0.0.0": {
         "runtime": {
           "TWG_HR_API.dll": {
@@ -7722,6 +7865,14 @@
           "TWG_HR_AuthenticationService.dll": {
             "assemblyVersion": "1.0.0.0",
             "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "System.Text.Encoding.CodePages.Reference/4.1.1.0": {
+        "runtime": {
+          "System.Text.Encoding.CodePages.dll": {
+            "assemblyVersion": "4.1.1.0",
+            "fileVersion": "4.6.26515.6"
           }
         }
       }
@@ -9063,12 +9214,26 @@
       "path": "newtonsoft.json.bson/1.0.1",
       "hashPath": "newtonsoft.json.bson.1.0.1.nupkg.sha512"
     },
+    "NPOI/2.5.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-2RkrIi+h6hDcrdR8EIxMpBb7vSz5Lgsr1HKgrA7Q+9/zQ17ky5b+3eHuJeuautFhRSrUTRxUfOpF5l9Vooy8/A==",
+      "path": "npoi/2.5.1",
+      "hashPath": "npoi.2.5.1.nupkg.sha512"
+    },
     "NuGet.Frameworks/4.7.0": {
       "type": "package",
       "serviceable": true,
       "sha512": "sha512-qbXaB76XYUVLocLBs8Z9TS/ERGK2wm797feO+0JEPFvT7o7MRadOR77mqaSD4J1k8G+DlZQyq+MlkCuxrkr3ag==",
       "path": "nuget.frameworks/4.7.0",
       "hashPath": "nuget.frameworks.4.7.0.nupkg.sha512"
+    },
+    "Portable.BouncyCastle/1.8.6": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-y+GvZomzhY+Lwu5mMeNmFFYLHiEr2xFDOANhABn/wgg64/QpTzfgpNGPct+pXgQHjmutd363ZCur/91DLaBxOw==",
+      "path": "portable.bouncycastle/1.8.6",
+      "hashPath": "portable.bouncycastle.1.8.6.nupkg.sha512"
     },
     "Remotion.Linq/2.2.0": {
       "type": "package",
@@ -9245,6 +9410,13 @@
       "path": "runtime.win-x86.runtime.native.system.data.sqlclient.sni/4.4.0",
       "hashPath": "runtime.win-x86.runtime.native.system.data.sqlclient.sni.4.4.0.nupkg.sha512"
     },
+    "SharpZipLib/1.2.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-zvWa/L02JHNatdtjya6Swpudb2YEHaOLHL1eRrqpjm71iGRNUNONO5adUF/9CHbSJbzhELW1UoH4NGy7n7+3bQ==",
+      "path": "sharpziplib/1.2.0",
+      "hashPath": "sharpziplib.1.2.0.nupkg.sha512"
+    },
     "shortid/2.0.1": {
       "type": "package",
       "serviceable": true,
@@ -9349,6 +9521,13 @@
       "sha512": "sha512-0Zae/FtzeFgDBBuILeIbC/T9HMYbW4olAmi8XqqAGosSOWvXfiQLfARZEhiGd0LVXaYgXr0NhxiU1LldRP1fpQ==",
       "path": "system.composition.typedparts/1.0.31",
       "hashPath": "system.composition.typedparts.1.0.31.nupkg.sha512"
+    },
+    "System.Configuration.ConfigurationManager/4.5.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-UIFvaFfuKhLr9u5tWMxmVoDPkFeD+Qv8gUuap4aZgVGYSYMdERck4OhLN/2gulAc0nYTEigWXSJNNWshrmxnng==",
+      "path": "system.configuration.configurationmanager/4.5.0",
+      "hashPath": "system.configuration.configurationmanager.4.5.0.nupkg.sha512"
     },
     "System.Console/4.3.0": {
       "type": "package",
@@ -9763,6 +9942,13 @@
       "path": "system.security.cryptography.primitives/4.3.0",
       "hashPath": "system.security.cryptography.primitives.4.3.0.nupkg.sha512"
     },
+    "System.Security.Cryptography.ProtectedData/4.5.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-wLBKzFnDCxP12VL9ANydSYhk59fC4cvOr9ypYQLPnAj48NQIhqnjdD2yhP8yEKyBJEjERWS9DisKL7rX5eU25Q==",
+      "path": "system.security.cryptography.protecteddata/4.5.0",
+      "hashPath": "system.security.cryptography.protecteddata.4.5.0.nupkg.sha512"
+    },
     "System.Security.Cryptography.X509Certificates/4.3.0": {
       "type": "package",
       "serviceable": true,
@@ -9931,12 +10117,32 @@
       "path": "windowsazure.storage/9.3.3",
       "hashPath": "windowsazure.storage.9.3.3.nupkg.sha512"
     },
+    "Aspose.Cells/19.7.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Aspose.Pdf/19.9.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Aspose.Words/19.3.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
     "TWG_HR_API/1.0.0.0": {
       "type": "reference",
       "serviceable": false,
       "sha512": ""
     },
     "TWG_HR_AuthenticationService/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "System.Text.Encoding.CodePages.Reference/4.1.1.0": {
       "type": "reference",
       "serviceable": false,
       "sha512": ""

@@ -137,8 +137,7 @@ namespace ACheckAPI.Dao
             }
             return context.SaveChanges();
         }
-
-
+        
         public int UpdateCategory(Category category)
         {
             var entity = context.Category.AsNoTracking().Where(p => p.CategoryId.Equals(category.CategoryId)).FirstOrDefault();

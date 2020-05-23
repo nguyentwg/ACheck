@@ -47,6 +47,7 @@ namespace ACheckAPI
             AzureConfig azureConfig = new AzureConfig();
             _configurationRoot.GetSection("AzureConfig").Bind(azureConfig);
             AppSetting.azureConfig = azureConfig;
+            AppSetting.LAH_Hr_Api = _configurationRoot.GetSection("LAH_Hr_Api").Value;
             //services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.Configure<CookiePolicyOptions>(options =>
             {

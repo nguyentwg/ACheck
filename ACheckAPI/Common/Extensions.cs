@@ -30,13 +30,23 @@ namespace ACheckAPI.Models
             return source;
         }
 
+        //public static void CopyPropertiesTo<T>(this T source, T dest)
+        //{
+        //    var plist = from prop in typeof(T).GetProperties() where prop.CanRead && prop.CanWrite select prop;
+
+        //    foreach (PropertyInfo prop in plist)
+        //    {
+        //        prop.SetValue(dest, prop.GetValue(source, null), null);
+        //        dest.GetType().GetProperty(prop.Name).SetValue(dest, prop.GetValue(source));
+        //        //prop.SetValue(dest, prop.GetValue(source, null), null);
+        //    }
+        //}
         public static void CopyPropertiesTo<T>(this T source, T dest)
         {
             var plist = from prop in typeof(T).GetProperties() where prop.CanRead && prop.CanWrite select prop;
 
             foreach (PropertyInfo prop in plist)
             {
-                //dest.GetType().GetProperty(prop.Name).SetValue(dest, prop.GetValue(source));
                 prop.SetValue(dest, prop.GetValue(source, null), null);
             }
         }
@@ -78,8 +88,8 @@ namespace ACheckAPI.Models
                 }
                 if(s[property.Key] == null || property.Value == null)
                 {
-                    string _new = s[property.Key] == null ? "null" : s[property.Key];
-                    string _old = property.Value == null ? "null" : property.Value;
+                    string _new = Convert.ToString(s[property.Key]) == null ? "null" : Convert.ToString(s[property.Key]);
+                    string _old = Convert.ToString(property.Value) == null ? "null" : Convert.ToString(property.Value);
                     oldValue.Add(property.Key, _old);
                     newValue.Add(property.Key, _new);
                 }
