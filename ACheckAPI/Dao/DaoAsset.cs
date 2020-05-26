@@ -14,9 +14,10 @@ namespace ACheckAPI.Dao
     public class DaoAsset : DaoBase
     {
         public DaoAsset(TWG_ACHECKContext _context) : base(_context) { }
-        public List<Asset> GetAll()
+        public ViewAssetResult GetAll(int page, int pageSize)
         {
-            var result = (from asset in context.Asset
+            ViewAssetResult result = new ViewAssetResult();
+            var data = (from asset in context.Asset
                           .Include(p => p.Image)
                           .Include(p => p.Assign)
                           .Include(p => p.DeptAsset)
@@ -40,6 +41,13 @@ namespace ACheckAPI.Dao
                               x.asset.DeptAsset = x.asset.DeptAsset.Where(p => p.Active == true).ToList();
                               return x.asset;
                           }).AsEnumerable().ToList();
+            if (page > 0)
+            {
+                //Phân trang
+                result.data = data.Skip(pageSize * (page - 1)).Take(pageSize).ToList();
+                result.total = data.Count();
+                result.pageCount = (int)Math.Ceiling((result.total * 1.0) / pageSize);
+            }
             return result;
         }
 

@@ -84,16 +84,16 @@ namespace ACheckAPI.Controllers
             return obj;
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route("GetAsset")]
-        public ReturnObject GetAsset()
+        public ReturnObject GetAsset(int page, int pageSize)
         {
             ReturnObject obj = new ReturnObject();
             obj.status = -1;
             try
             {
                 DaoAsset daoAsset = new DaoAsset(tWG_ACHECKContext);
-                var result = daoAsset.GetAll();
+                var result = daoAsset.GetAll(page, pageSize);
                 obj.status = 1;
                 obj.value = result;
             }
