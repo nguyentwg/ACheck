@@ -24,6 +24,7 @@ namespace ACheckAPI.Controllers
         [Route("GetAssetByID")]
         public ReturnObject GetAssetByID(string AssetID)
         {
+            TWG_HR_API.APIRequest res = new TWG_HR_API.APIRequest(null, null);
             ReturnObject obj = new ReturnObject();
             obj.status = -1;
             try

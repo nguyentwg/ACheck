@@ -12,6 +12,7 @@ namespace ACheckAPI.ModelViews
         public int countSubCategory { get; set; }
         public virtual List<Asset> lsAsset { get; set; }
         public virtual List<Category> lsSubCategory { get; set; }
+        public virtual Category Category { get; set; }
 
         public ViewCategory()
         {

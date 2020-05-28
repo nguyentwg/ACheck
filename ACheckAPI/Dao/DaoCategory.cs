@@ -30,7 +30,8 @@ namespace ACheckAPI.Dao
         {
             DaoAsset daoAsset = new DaoAsset(context);
             ViewCategory result = new ViewCategory();
-            result.lsSubCategory = context.Category.AsNoTracking().Where(p => p.Active == true && p.ParentId.Equals(CategoryId))
+            result.Category = context.Category.AsNoTracking().Where(p => p.Active == true && p.CategoryId.Equals(CategoryId)).AsEnumerable().FirstOrDefault();
+            result.lsSubCategory = context.Category.AsNoTracking().Where(p => p.Active == true && p.ParentId.Equals(CategoryId)).OrderBy(p=>p.No)
                                                    //.Include(p => p.EavAttributeValue)
                                                    //.ThenInclude(x => x.Eav).AsEnumerable()
                                                    .ToList();

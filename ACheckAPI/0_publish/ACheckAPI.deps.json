@@ -37,7 +37,7 @@
           "Aspose.Cells": "19.7.0.0",
           "Aspose.Pdf": "19.9.0.0",
           "Aspose.Words": "19.3.0.0",
-          "TWG_HR_API": "1.0.0.0",
+          "TWG_HR_API": "1.2.0.0",
           "TWG_HR_AuthenticationService": "1.0.0.0"
         },
         "compile": {
@@ -3281,7 +3281,7 @@
           "Aspose.Words.dll": {}
         }
       },
-      "TWG_HR_API/1.0.0.0": {
+      "TWG_HR_API/1.2.0.0": {
         "compile": {
           "TWG_HR_API.dll": {}
         }
@@ -3308,7 +3308,7 @@
           "Aspose.Cells": "19.7.0.0",
           "Aspose.Pdf": "19.9.0.0",
           "Aspose.Words": "19.3.0.0",
-          "TWG_HR_API": "1.0.0.0",
+          "TWG_HR_API": "1.2.0.0",
           "TWG_HR_AuthenticationService": "1.0.0.0"
         },
         "runtime": {
@@ -7852,11 +7852,11 @@
           }
         }
       },
-      "TWG_HR_API/1.0.0.0": {
+      "TWG_HR_API/1.2.0.0": {
         "runtime": {
           "TWG_HR_API.dll": {
-            "assemblyVersion": "1.0.0.0",
-            "fileVersion": "1.0.0.0"
+            "assemblyVersion": "1.2.0.0",
+            "fileVersion": "1.2.0.0"
           }
         }
       },
@@ -10132,7 +10132,7 @@
       "serviceable": false,
       "sha512": ""
     },
-    "TWG_HR_API/1.0.0.0": {
+    "TWG_HR_API/1.2.0.0": {
       "type": "reference",
       "serviceable": false,
       "sha512": ""

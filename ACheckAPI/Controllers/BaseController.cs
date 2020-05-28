@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ACheckAPI.Models;
 using Microsoft.AspNetCore.Mvc.Filters;
-using TWG_HR_API;
+//using TWG_HR_API;
 using TWG_HR_AuthenticationService;
 
 namespace ACheckAPI.Controllers
@@ -15,7 +15,7 @@ namespace ACheckAPI.Controllers
     [ApiController]
     public class BaseController : Controller
     {
-        protected APIRequest apiRequest;
+        //protected APIRequest apiRequest;
         protected readonly TWG_ACHECKContext tWG_ACHECKContext;
         public BaseController(TWG_ACHECKContext tWG_ACHECKContext)
         {
