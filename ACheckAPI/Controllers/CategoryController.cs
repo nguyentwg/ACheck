@@ -61,6 +61,31 @@ namespace ACheckAPI.Controllers
         }
 
         [HttpGet]
+        [Route("GetCategoriesByKeyWord")]
+        public ReturnObject GetCategoriesByKeyWord(string keyWord)
+        {
+            ReturnObject obj = new ReturnObject();
+            obj.status = -1;
+            try
+            {
+                object result = new object();
+                DaoCategory daoCategory = new DaoCategory(tWG_ACHECKContext);
+                if (!string.IsNullOrEmpty(keyWord))
+                {
+                    result = daoCategory.GetCategoriesByKeyWord(keyWord);
+                }
+                obj.status = 1;
+                obj.value = result;
+            }
+            catch (Exception ex)
+            {
+                obj.status = -1;
+                obj.message = ex.StackTrace;
+            }
+            return obj;
+        }
+
+        [HttpGet]
         [Route("GetCategoryByID")]
         public ReturnObject GetCategoryByID(string CategoryId)
         {

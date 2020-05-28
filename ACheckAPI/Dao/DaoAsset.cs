@@ -145,6 +145,12 @@ namespace ACheckAPI.Dao
             return result;
         }
 
+        public object AssetFilter(string keyWord)
+        {
+            return context.Asset.AsNoTracking().Where(p => p.Active == true && (p.AssetId.Contains(keyWord) || p.AssetName.ToLower().Contains(keyWord.ToLower()) || p.AssetCode.Contains(keyWord) || p.Model.Contains(keyWord) || p.Origin.Contains(keyWord)))
+                .Select(i=> new { AssetId = i.AssetId, AssetName = i.AssetName, AssetCode = i.AssetCode }).AsEnumerable().ToList();
+        }
+
 
         public async Task<int> Add(ViewAsset viewAsset, IFormFileCollection formFileCollection)
         {

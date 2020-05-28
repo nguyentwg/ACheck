@@ -66,16 +66,26 @@ namespace ACheckAPI.Controllers
 
         [HttpGet]
         [Route("AssetFilter")]
-        public ReturnObject AssetFilter(string AssetID, string AssetName)
+        public ReturnObject AssetFilter(string AssetID, string AssetName, string keyWord)
         {
             ReturnObject obj = new ReturnObject();
             obj.status = -1;
             try
             {
                 DaoAsset daoAsset = new DaoAsset(tWG_ACHECKContext);
-                var result = daoAsset.AssetFilter(AssetID, AssetName);
+                if (!string.IsNullOrEmpty(keyWord))
+                {
+                    object result = new object();
+                    result = daoAsset.AssetFilter(keyWord);
+                    obj.value = result;
+                }
+                else
+                {
+                    List<Asset> result = new List<Asset>();
+                    result = daoAsset.AssetFilter(AssetID, AssetName);
+                    obj.value = result;
+                }
                 obj.status = 1;
-                obj.value = result;
             }
             catch (Exception ex)
             {

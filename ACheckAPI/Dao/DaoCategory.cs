@@ -26,6 +26,12 @@ namespace ACheckAPI.Dao
             return context.Category.AsNoTracking().Where(p => p.Active == true).Include(p=>p.EavAttributeValue).ThenInclude(x=>x.Eav).AsEnumerable().ToList();
         }
 
+        public object GetCategoriesByKeyWord(string keyWord)
+        {
+            return context.Category.AsNoTracking().Where(p => p.Active == true && (p.CategoryId.ToLower().Contains(keyWord.ToLower()) || p.Code.ToLower().Contains(keyWord.ToLower()) || p.CategoryName.ToLower().Contains(keyWord.ToLower())))
+                .Select(i => new {CategoryId = i.CategoryId, CategoryName = i.CategoryName }).AsEnumerable().ToList();
+        }
+
         public ViewCategory GetCategoriesByID(string CategoryId)
         {
             DaoAsset daoAsset = new DaoAsset(context);
